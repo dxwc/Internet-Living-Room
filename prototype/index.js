@@ -22,16 +22,28 @@ global.max_emit = 0;
 let vid_arr =
 [
     {
-        video_id : 'Cbrh1jg2gQA',
-        video_length : 68
+        video_id : 'bk7McNUjWgw',
+        video_length : 200
     },
     {
-        video_id : 'vmdITEguAnE',
-        video_length : 861
+        video_id : 'r2bJXGX8-dM',
+        video_length : 145
     },
     {
-        video_id : 'BuoY_agvSs8',
-        video_length : 4
+        video_id : 'qpFjFRjmbdc',
+        video_length : 78
+    },
+    {
+        video_id : 'vNaEBbFbvcY',
+        video_length : 673
+    },
+    {
+        video_id : '6m0xgwkyyy0',
+        video_length : 764
+    },
+    {
+        video_id : 'fT4lDU-QLUY',
+        video_length : 332
     }
 ];
 
