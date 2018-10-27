@@ -79,10 +79,9 @@
     // ^^^^^^^^^^^^^^ mostly as found on youtube api doc example ^^^^^^^^^^^^^^^^
 
     // check if a number is in within plus or minus range of the target number
-    function is_in_range(num, target, error_left_or_right)
+    function is_in_range(num, target, plus_or_minus)
     {
-        return num - error_left_or_right >= target ||
-               num + error_left_or_right <= target ;
+        return num >= target - plus_or_minus && num <= target + plus_or_minus ;
     }
 
     // Setup a function that will run each time user recieves anything through
@@ -105,16 +104,33 @@
             );
         }
 
-        // If the current video time user is seeing is not same as +- 1 seconds
-        // of the recieved time user should be seeing, change to recieved time
-        // runs only if the video is playing, not stopped or buffering etc
-        if
-        (
-            player.getPlayerState() == 1 &&
-            is_in_range(player.getCurrentTime(), data.play_at, 1)
-        )
+        if(player.getPlayerState() === 1)
         {
-            player.seekTo(data.play_at);
+            // If the current video time user is seeing is not same as 1 seconds
+            // of the recieved time user should be seeing, change to recieved time
+            // runs only if the video is playing, not stopped or buffering etc
+
+            // - Increase allowed error seconds to prevent skipping/lagging
+            // - Decrease allowed error (upto 0) seconds to make syncing more
+            // precise but it may increase skipping/lagging
+            if(!is_in_range(player.getCurrentTime(), data.play_at, 1))
+                player.seekTo(data.play_at);
+
+            // Change page title to indicate which video is currently playing
+            if(document.title !== 'NOW PLAYING: ' + player.getVideoData().title)
+                document.title = 'NOW PLAYING: ' + player.getVideoData().title;
+        }
+        else if(player.getPlayerState() === 2)
+        {
+            document.title = 'PAUSED';
+        }
+        else if(player.getPlayerState() === 3)
+        {
+            document.title = 'YOUTUBE BUFFERING / SERVER SYNCING';
+        }
+        else
+        {
+            document.title = 'Public Room Prototype';
         }
     }
 
