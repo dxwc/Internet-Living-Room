@@ -24,8 +24,6 @@
     // at /sse path/route
     let evtSource = new EventSource('/sse');
 
-    // ------------- mostly as found on youtube api doc example ---------------
-
     let tag = document.createElement('script');
 
     tag.src = "https://www.youtube.com/iframe_api";
@@ -75,8 +73,6 @@
     {
         player.stopVideo();
     }
-
-    // ^^^^^^^^^^^^^^ mostly as found on youtube api doc example ^^^^^^^^^^^^^^^^
 
     // check if a number is in within plus or minus range of the target number
     function is_in_range(num, target, plus_or_minus)
