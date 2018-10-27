@@ -10,6 +10,11 @@
             border: 0;
             background: black;
         }
+        #player
+        {
+            width: 100%;
+            max-height: 100%;
+        }
     </style>
 </head>
 <body>
@@ -34,11 +39,8 @@
         (
             'player',
             {
-                width: window.innerWidth, // setting to browser width
-                // keeping 16:9 aspect ratio:
-                height: ((window.innerWidth) * 9)/16,
-                // ^^^ NOTE: if viewport is less than 200x200, it is not
-                // guranteed to work
+                height: window.innerHeight,
+                width: (window.innerHeight * 16)/9,
                 videoId: '',
                 playerVars: // extra specificity
                 {
@@ -120,7 +122,7 @@
     // function
     window.addEventListener('resize', (e) =>
     {
-        player.setSize(window.innerWidth, ((window.innerWidth * 9)/16));
+        player.setSize((window.innerHeight * 16)/9, window.innerHeight);
     });
 </script>
 </body>
