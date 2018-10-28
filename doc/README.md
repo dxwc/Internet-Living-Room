@@ -9,7 +9,9 @@
 
 # DB
 
-Run once every time necessary: `systemctl start postgresql` or similar
-command to start postgresql service on your OS
+May need to run `systemctl start postgresql` or similar command to start postgresql service on your OS at every reboot.
 
-Run once: `sudo -u postgres createuser -P -s -e ilr_admin` and set account password: `ilr_pass`
+Run once:
+
++ `sudo -u postgres createuser -P -s -e ilr_admin` and set account password: `ilr_pass`
++ `sudo -u postgres createdb ilr --owner ilr_admin`
