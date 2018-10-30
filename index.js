@@ -18,3 +18,6 @@ const server = app.listen(process.env.PORT || '9001', (err) =>
         );
     }
 });
+
+module.exports.app    = app;
+module.exports.server = server;
