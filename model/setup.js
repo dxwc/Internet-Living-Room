@@ -82,5 +82,6 @@ sequelize.sync
     process.exit(1);
 });
 
+module.exports.sequelize = sequelize;
 module.exports.user = user;
 module.exports.channel = channel;
