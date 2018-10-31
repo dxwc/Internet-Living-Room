@@ -4,20 +4,19 @@ const request = require('supertest');
 const val     = require('validator');
 
 let http_server;
-let db_server;
 
 describe('TESTING /api/0.0.0/sign_up', () =>
 {
-    beforeEach(() =>
+    beforeEach((done) =>
     {
-        db_server = require('../../model/setup.js').sequelize;
-        http_server = require('../../index.js').server;
+        require('../../index.js').start()
+        .then((res)  => { http_server = res; done(); })
+        .catch((err) => { done(err); });
     });
 
     afterEach(() =>
     {
         if(http_server) http_server.close();
-        db_server.close();
     });
 
     it('should POST valid data successfully to /api/0.0.0/sign_up', (done) =>

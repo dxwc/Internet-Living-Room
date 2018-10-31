@@ -1,7 +1,7 @@
 {
   "scripts": {
     "start": "npx nodemon index.js",
-    "test": "npx mocha --recursive"
+    "test": "TESTING=true npx mocha --recursive"
   },
   "dependencies": {
     "bcrypt": "^3.0.2",

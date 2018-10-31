@@ -69,19 +69,32 @@ const channel = sequelize.define
     }
 );
 
-sequelize.sync
-({
-    logging : false,
-    // force: true, // deletes all data
-    // alter : true // deleted data where necessary
-})
-.catch((err) =>
+function connect()
 {
-    console.error('Error setting up tables');
-    console.error(err);
-    process.exit(1);
-});
+    return new Promise((resolve, reject) =>
+    {
+        sequelize.sync
+        ({
+            logging : false,
+            // force: true, // deletes all data
+            // alter : true // deleted data where necessary
+        })
+        .then(() =>
+        {
+            console.info('- DB server connection started');
+            return resolve(sequelize);
+        })
+        .catch((err) =>
+        {
+            console.error('Error setting up tables');
+            console.error(err);
+            process.exit(1);
+        });
+    });
+}
+
 
 module.exports.sequelize = sequelize;
+module.exports.connect = connect;
 module.exports.user = user;
 module.exports.channel = channel;

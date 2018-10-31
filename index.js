@@ -7,17 +7,52 @@ app.use(require('./controller/home.js'));
 app.use(require('./controller/api_0.0.0/sign_up.js'));
 app.use(require('./controller/404.js')); // last router to use
 
-const server = app.listen(process.env.PORT || '9001', (err) =>
+let db = require('./model/setup.js');
+let http_server;
+
+function start()
 {
-    if(err) console.error('Error starting server:', err);
-    else
+    return db.connect()
+    .then(() =>
     {
-        console.info('Server started,', server.address().family === 'IPv6' ?
-            'http://[' + server.address().address + ']:'+ server.address().port :
-            'http://' + server.address().address + ':' + server.address.port
-        );
-    }
-});
+        http_server = app.listen(process.env.PORT || '9001');
+
+        http_server.on('error', (err) =>
+        {
+            console.error('Error starting server:');
+            console.error(err);
+            if(db.sequelize)
+                db.sequelize.close().then(() => process.exit(1));
+            else process.exit(1);
+        });
+
+        http_server.on('close', () =>
+        {
+            if(db.sequelize) db.sequelize.close();
+        });
+
+        return new Promise((resolve, reject) =>
+        {
+            http_server.on('listening', () =>
+            {
+                console.info
+                (
+                    '- HTTP server started,',
+                    http_server.address().family === 'IPv6' ?
+                        'http://[' + http_server.address().address + ']:'
+                        + http_server.address().port
+                        :
+                        'http://' + http_server.address().address + ':'
+                        + http_server.address.port
+                );
+
+                return resolve(http_server);
+            });
+        });
+    });
+}
+
+if(!process.env.TESTING) start();
 
 module.exports.app    = app;
-module.exports.server = server;
+module.exports.start  = start;
