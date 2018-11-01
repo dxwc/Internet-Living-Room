@@ -36,14 +36,6 @@ let vid_arr =
     {
         video_id : 'vNaEBbFbvcY',
         video_length : 673
-    },
-    {
-        video_id : '6m0xgwkyyy0',
-        video_length : 764
-    },
-    {
-        video_id : 'fT4lDU-QLUY',
-        video_length : 332
     }
 ];
 
