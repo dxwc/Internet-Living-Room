@@ -83,7 +83,6 @@ describe('TESTING /api/0.0.0/sign_up', () =>
 
     function check_sign_up(done, user_name, password)
     {
-        console.log(user_name, password)
         request(http_server)
         .post('/api/0.0.0/sign_up')
         .set('Accept', 'application/json')
