@@ -1,7 +1,7 @@
 let router = require('express').Router();
 let op     = require('../../model/api_operations');
 
-router.post('/api/0.0.0/sign_up', (req, res) =>
+router.post('/api/0.0.0/user', (req, res) =>
 {
     if
     (

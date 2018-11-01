@@ -4,7 +4,7 @@ app.use(require('body-parser').urlencoded({ extended: false }));
 app.use(require('body-parser').json());
 
 app.use(require('./controller/home.js'));
-app.use(require('./controller/api_0.0.0/sign_up.js'));
+app.use(require('./controller/api_0.0.0/user.js'));
 app.use(require('./controller/404.js')); // last router to use
 
 let db = require('./model/setup.js');

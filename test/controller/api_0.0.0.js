@@ -5,7 +5,7 @@ const val     = require('validator');
 
 let http_server;
 
-describe('TESTING /api/0.0.0/sign_up', () =>
+describe('TESTING /api/0.0.0/user', () =>
 {
     beforeEach((done) =>
     {
@@ -84,7 +84,7 @@ describe('TESTING /api/0.0.0/sign_up', () =>
     function check_sign_up(done, user_name, password)
     {
         request(http_server)
-        .post('/api/0.0.0/sign_up')
+        .post('/api/0.0.0/user')
         .set('Accept', 'application/json')
         .send
         ({
@@ -101,7 +101,7 @@ describe('TESTING /api/0.0.0/sign_up', () =>
         .catch((err) => done(err));
     }
 
-    it('should POST valid data successfully to /api/0.0.0/sign_up', (done) =>
+    it('should POST valid data successfully to /api/0.0.0/user', (done) =>
     {
         check_sign_up
         (done, faker.internet.userName(), faker.internet.password());
@@ -109,7 +109,7 @@ describe('TESTING /api/0.0.0/sign_up', () =>
 
     it
     (
-        'should POST valid but duplicate data unsuccessfully to /api/0.0.0/sign_up',
+        'should POST valid but duplicate data unsuccessfully to /api/0.0.0/user',
         (done) =>
         {
             check_sign_up(done, 'john', faker.internet.password());
@@ -118,7 +118,7 @@ describe('TESTING /api/0.0.0/sign_up', () =>
 
     it
     (
-        'should POST invalid data unsuccessfully to /api/0.0.0/sign_up',
+        'should POST invalid data unsuccessfully to /api/0.0.0/user',
         (done) =>
         {
             delete process.env.TESTING;
