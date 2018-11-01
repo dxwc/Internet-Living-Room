@@ -28,8 +28,7 @@ function start()
 
         http_server.on('close', () =>
         {
-            if(!process.env.TESTING && db.sequelize)
-                db.sequelize.close();
+            if(db.sequelize) db.sequelize.close();
         });
 
         return new Promise((resolve, reject) =>

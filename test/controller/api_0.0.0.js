@@ -7,14 +7,14 @@ let http_server;
 
 describe('TESTING /api/0.0.0/user', () =>
 {
-    beforeEach((done) =>
+    before((done) =>
     {
         require('../../index.js').start()
         .then((res)  => { http_server = res; done(); })
         .catch((err) => { done(err); });
     });
 
-    afterEach(() =>
+    after(() =>
     {
         if(http_server) http_server.close();
     });
@@ -92,11 +92,7 @@ describe('TESTING /api/0.0.0/user', () =>
             password : password
         })
         .expect('Content-Type', /json/)
-        .then((res) =>
-        {
-            assert_sign_up
-            (res, faker.internet.userName(), faker.internet.password());
-        })
+        .then((res) => assert_sign_up(res, user_name, password))
         .then(() => done())
         .catch((err) => done(err));
     }
@@ -121,7 +117,6 @@ describe('TESTING /api/0.0.0/user', () =>
         'should POST invalid data unsuccessfully to /api/0.0.0/user',
         (done) =>
         {
-            delete process.env.TESTING;
             check_sign_up(done, faker.internet.userName());
         }
     )
