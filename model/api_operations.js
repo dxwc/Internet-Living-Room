@@ -1,5 +1,6 @@
-let model = require('./setup.js');
-const val = require('validator');
+const model  = require('./setup.js');
+const val    = require('validator');
+const bcrypt = require('bcrypt');
 
 function sign_up
 (
@@ -7,10 +8,14 @@ function sign_up
     password
 )
 {
-    return model.user.create
-    ({
-        uname : val.escape(user_name),
-        upass : val.escape(password)
+    return bcrypt.hash(password, 12)
+    .then((hashed_password) =>
+    {
+        return model.user.create
+        ({
+            uname : val.escape(user_name),
+            upass : hashed_password
+        });
     })
     .then((res) => res.dataValues.id)
     .catch((err) =>
