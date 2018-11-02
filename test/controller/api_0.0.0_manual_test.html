@@ -1,0 +1,44 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Manual Post Test</title>
+</head>
+<body>
+    <h3>Manual test for user sign up API</h3>
+    <form id='frm' method='POST' action='http://[::]:9001/api/0.0.0/user'>
+        Path request will be sent to:
+        <input
+            id='path'
+            type='text'
+            placeholder='Enter the URL to request'
+            value='http://[::]:9001/api/0.0.0/user'
+            required>
+        <br>
+        Username:
+        <input
+            name='user_name'
+            type='text'
+            placeholder='Enter a username to test'>
+        <br>
+        Password:
+        <input
+            name='password'
+            type='text'
+            name='password'
+            placeholder='Enter a password to test'>
+        <br>
+        <button
+            type='submit'>
+            Send
+        </button>
+    </form>
+    <script>
+        let path = document.getElementById('path');
+        let form =  document.getElementById('frm');
+        form.action = path.value;
+        path.addEventListener('keyup', () => form.action = path.value);
+    </script>
+</body>
+</html>
