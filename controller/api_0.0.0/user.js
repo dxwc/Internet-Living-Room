@@ -1,5 +1,6 @@
 let router = require('express').Router();
 let op     = require('../../model/api_operations');
+let val    = require('validator');
 
 router.post('/api/0.0.0/user', (req, res) =>
 {
@@ -44,6 +45,27 @@ router.post('/api/0.0.0/user', (req, res) =>
             reason_code : -2,
             reason_text : 'Invalid request, expected `user_name` and `password`'
         });
+    }
+});
+
+router.get('/api/0.0.0/user/:id', (req, res) =>
+{
+    if(typeof(req.param.id) && val.isUUID(req.params.id, 4))
+    {
+        op.get_user_info(req.params.id)
+        .then((result) =>
+        {
+            result.success = true;
+            return res.status(200).json(result);
+        })
+        .catch((err) =>
+        {
+            res.send('TODO');
+        });
+    }
+    else
+    {
+        res.send('TODO');
     }
 });
 
