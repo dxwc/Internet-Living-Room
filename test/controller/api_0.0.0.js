@@ -2,6 +2,7 @@ const faker   = require('faker');
 const assert  = require('assert');
 const request = require('supertest');
 const val     = require('validator');
+const db      = require('../../model/setup.js');
 
 let http_server;
 
@@ -119,5 +120,57 @@ describe('TESTING /api/0.0.0/user', () =>
         {
             check_sign_up(done, faker.internet.userName());
         }
-    )
+    );
+
+// --------------------------------------------------------------------
+
+    function assert_user_info(res)
+    {
+        assert
+        (
+            typeof(res.body.success) === 'boolean',
+            'boolean `success` field exists'
+        );
+
+        if(res.body.success)
+        {
+            assert(res.status === 200, '`success` true, so 200');
+
+            assert
+            (
+                typeof(res.body.user_name) === 'string',
+                '`user_name` field exists and is string'
+            );
+
+            assert
+            (
+                res.body.hasOwnProperty('first_name'),
+                '`first_name` field exists'
+            );
+
+            assert
+            (
+                res.body.hasOwnProperty('last_name'),
+                '`last_name` field exists'
+            );
+        }
+        else
+        {
+            // TODO
+        }
+    }
+
+    it('should successfully GET /api/0.0.0/user/<ID> with valid ID', (done) =>
+    {
+        db.user.findOne() // assumes there exists at least one
+        .then((res) =>
+        {
+            request(http_server)
+            .get('/api/0.0.0/user/' + res.dataValues.id)
+            .expect('Content-Type', /json/)
+            .then((res) => assert_user_info(res))
+            .then(() => done())
+            .catch((err) => done(err));
+        });
+    });
 });
