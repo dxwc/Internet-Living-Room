@@ -60,12 +60,36 @@ router.get('/api/0.0.0/user/:id', (req, res) =>
         })
         .catch((err) =>
         {
-            res.send('TODO');
+            if(err.code === 'NO_USER')
+            {
+                return res.status(200).json
+                ({
+                    success     : false,
+                    reason_code : -1,
+                    reason_text : 'No such user exists'
+                });
+            }
+            else
+            {
+                console.error('/api/0.0.0/user/:id Error');
+                console.error(err);
+                return res.status(500).json
+                ({
+                    success     : false,
+                    rason_code  : -3,
+                    reason_text : 'Unhandled error, contact admin@example.com'
+                });
+            }
         });
     }
     else
     {
-        res.send('TODO');
+        return res.status(400).json
+        ({
+            success : false,
+            reason_code : -2,
+            reason_text : 'Invalid request, expected user id'
+        });
     }
 });
 

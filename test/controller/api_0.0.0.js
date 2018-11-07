@@ -162,11 +162,52 @@ describe('TESTING /api/0.0.0/user', () =>
         }
         else
         {
-            // TODO
+            assert
+            (
+                res.status === 200 || res.status === 400 || res.status === 500,
+                'Unsuccessful response can be 200, 400, or 500'
+            );
+
+            assert
+            (
+                res.body.reason_text,
+                'Includes `reason_text` string for being unsuccessful'
+            );
+
+            assert
+            (
+                res.body.reason_code,
+                'Includes `reason_code` code for being unsuccessful'
+            );
+
+            if(res.status === 200)
+            {
+                assert
+                (
+                    res.body.reason_code === -1,
+                    'If no such user exists, send `reason_code` of -1'
+                );
+            }
+            else if(res.status === 400)
+            {
+                assert
+                (
+                    res.body.reason_code === -2,
+                    'If invalid UUID, send `reason_code` of -2'
+                );
+            }
+            else if(res.reason_code === 500)
+            {
+                assert
+                (
+                    res.body.reason_code === -3,
+                    'If other server error/exception, send `reason_code` of -3'
+                );
+            }
         }
     }
 
-    it('should successfully GET /api/0.0.0/user/<ID> with valid ID', (done) =>
+    it('should successfully GET /api/0.0.0/user/<ID> with valid user ID', (done) =>
     {
         db.user.findOne() // assumes there exists at least one
         .then((res) =>
@@ -178,5 +219,25 @@ describe('TESTING /api/0.0.0/user', () =>
             .then(() => done())
             .catch((err) => done(err));
         });
+    });
+
+    it('should unsuccessfully GET /api/0.0.0/user/<ID> with valid UUID', (done) =>
+    {
+        request(http_server)
+        .get('/api/0.0.0/user/' + faker.random.uuid())
+        .expect('Content-Type', /json/)
+        .then((res) => assert_user_info(res))
+        .then(() => done())
+        .catch((err) => done(err));
+    });
+
+    it('should unsuccessfully GET /api/0.0.0/user/<ID> with invalid UUID', (done) =>
+    {
+        request(http_server)
+        .get('/api/0.0.0/user/' + faker.random.alphaNumeric(Math.random() * 100))
+        .expect('Content-Type', /json/)
+        .then((res) => assert_user_info(res))
+        .then(() => done())
+        .catch((err) => done(err));
     });
 });
