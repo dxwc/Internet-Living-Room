@@ -33,4 +33,36 @@ function sign_up
     });
 }
 
+function get_user_info(id)
+{
+    return model.user.findOne
+    ({
+        where : { id : id },
+        attributes : ['uname', 'fname', 'lname', 'createdAt']
+    })
+    .then((res) =>
+    {
+        if(!res || !res.dataValues)
+        {
+            let err = new Error('No such user exists on DB');
+            err.code ='NO_USER';
+            throw err;
+        }
+        else
+        {
+            return ({
+                user_name      : res.dataValues.uname,
+                first_name     : res.dataValues.fname,
+                last_name      : res.dataValues.lname,
+                registered_on  : res.dataValues.createdAt
+            });
+        }
+    })
+    .catch((err) =>
+    {
+        throw err;
+    });
+}
+
 module.exports.sign_up = sign_up;
+module.exports.get_user_info = get_user_info;
