@@ -153,6 +153,12 @@ describe('TESTING /api/0.0.0/user', () =>
                 res.body.hasOwnProperty('last_name'),
                 '`last_name` field exists'
             );
+
+            assert
+            (
+                res.body.hasOwnProperty('registered_on'),
+                '`registered_on` field exists'
+            );
         }
         else
         {
