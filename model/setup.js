@@ -65,6 +65,11 @@ const channel = sequelize.define
                 model : user,
                 key : 'id'
             }
+        },
+        capacity :
+        {
+            type : Sequelize.INTEGER,
+            defaultValue : 1
         }
     }
 );
