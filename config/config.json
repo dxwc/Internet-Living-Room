@@ -1,0 +1,9 @@
+{
+  "development": {
+    "username": "ilr_admin",
+    "password": "ilr_pass",
+    "database": "ilr",
+    "host": "127.0.0.1",
+    "dialect": "postgresql"
+  }
+}
