@@ -4,35 +4,50 @@ const model    = require('../model/setup.js');
 
 passport.use
 (
-    new Lcl((uname_given, pass_given, done) =>
-    {
-        return model.user.findOne
-        ({
-            where : { uname : uname_given },
-            attributes : ['id', 'upass']
-        })
-        .then((res) =>
+    new Lcl
+    (
         {
-            if(!res || !res.dataValues)
-                return done(null, false);
-            else
-                return model.user.verify_user(pass_given)
-                .then((result) =>
-                {
-                    if(!result) return done(null, false);
-                    else        return done(null, res.dataValues);
-                })
-                .catch((err) => done(err));
-        })
-        .catch((err) => done(err));
-    })
+            usernameField : 'user_name',
+            passwordField : 'password'
+        },
+        (uname_given, pass_given, done) =>
+        {
+            return model.user.findOne
+            ({
+                where : { uname : uname_given },
+                attributes : ['id', 'upass']
+            })
+            .then((res) =>
+            {
+                if(!res || !res.dataValues)
+                    return done(null, false);
+                else
+                    return model.user.verify_user(pass_given)
+                    .then((result) =>
+                    {
+                        if(!result) return done(null, false);
+                        else        return done(null, res.dataValues);
+                    })
+                    .catch((err) => done(err));
+            })
+            .catch((err) => done(err));
+        }
+    )
 );
 
 passport.serializeUser((user, done) => done(null, user.id));
 passport.deserializeUser((id, done) =>
 {
-    model.user.findOne({ id : id })
-    .then((user) => (user && user) ? done(null, res) : done(null, false))
+    model.user.findOne
+    ({
+        where : { id : id },
+        attributes : ['uname', 'fname', 'lname', 'createdAt']
+    })
+    .then((res) =>
+    {
+        if(res && res.dataValues) done(null, res.dataValues);
+        else                      done(null, false);
+    })
     .catch((err) => done(err));
 });
 
