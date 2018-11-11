@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize');
+const bcrypt    = require('bcrypt');
 
 const sequelize = new Sequelize
 (
@@ -43,6 +44,16 @@ const user = sequelize.define
         {
             type : Sequelize.TEXT,
             allowNull : true
+        }
+    },
+    {
+        instanceMethods :
+        {
+            verifyPassword : (upass_given) =>
+            {
+                bcrypt.hash(upass_given, process.env.TESTING ? 6 : 12)
+                .then((hash) => this.upass === hash);
+            }
         }
     }
 );

@@ -1,7 +1,19 @@
-const app = require('express')();
+const app      = require('express')();
+const passport = require('./middleware/auth.js');
 
 app.use(require('body-parser').urlencoded({ extended: false }));
 app.use(require('body-parser').json());
+app.use
+(
+    require('express-session')
+    ({
+        secret            : process.env.SESSION_SECRET || 'CHANGE_ME',
+        resave            : true,
+        saveUninitialized : true
+    })
+);
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(require('./controller/home.js'));
 app.use(require('./controller/api_0.0.0/user.js'));
