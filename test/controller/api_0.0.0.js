@@ -240,4 +240,90 @@ describe('TESTING /api/0.0.0/user', () =>
         .then(() => done())
         .catch((err) => done(err));
     });
+
+    function assert_get_captcha(res)
+    {
+        assert
+        (
+            typeof(res.body.success) === 'boolean',
+            'boolean `success` field exists'
+        );
+
+        if(res.body.success)
+        {
+            assert(res.status === 200, '`success` true, so 200');
+            assert(typeof(res.body.captcha) === 'string', 'has `captcha` key');
+            assert(res.body.captcha.length, '`captcha` data length is > 0');
+            assert
+            (
+                res.body.captcha.indexOf('<svg')       === 0      &&
+                res.body.captcha.lastIndexOf('</svg>') ===
+                res.body.captcha.length-6,
+                'Captcha is svg tagged data'
+            );
+        }
+        else
+        {
+            assert(res.status === 500, 'captcha generation error, so 500');
+            assert
+            (
+                res.body.reason_text,
+                'Includes `reason_text` string for being unsuccessful'
+            );
+
+            assert
+            (
+                res.body.reason_code,
+                'Includes `reason_code` code for being unsuccessful'
+            );
+
+            assert
+            (
+                res.body.reason_code === -5,
+                'If svg couldn\'t be generated, send `reason_code` of -1'
+            );
+
+            throw new Error('Captcha generation should not have failed');
+        }
+    }
+
+    let agent = request.agent(require('../../index.js').app);
+
+    it('should GET captcha successfully from /api/0.0.0/auth', (done) =>
+    {
+        // request(http_server) // captcha is set to 'a' for process.env.TESTING
+        agent
+        .get('/api/0.0.0/auth')
+        .expect('Content-Type', /json/)
+        .then((res) => assert_get_captcha(res))
+        .then(() => done())
+        .catch((err) => done(err));
+    });
+
+    function assert_login(res)
+    {
+        console.log(res.status);
+        // console.log(res.body);
+        // TODO
+    }
+
+    it
+    (
+        'should POST valid but unknown data for login with correct captcha',
+        (done) =>
+    {
+        agent
+        .post('/api/0.0.0/login')
+        .set('Accept', 'application/json')
+        .send
+        ({
+            user_name : faker.internet.userName(),
+            password : faker.internet.password(),
+            captcha_text : 'a'
+        })
+        .expect('Content-Type', /json/)
+        .then((res) => assert_login(res))
+        .then(() => done())
+        .catch((err) => done(err));
+    });
 });

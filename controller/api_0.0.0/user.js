@@ -1,6 +1,37 @@
 let router = require('express').Router();
 let op     = require('../../model/api_operations');
 let val    = require('validator');
+let svg_captcha = require('svg-captcha');
+let passport = require('passport');
+
+function set_captcha_get_svg(req)
+{
+    try
+    {
+        let captcha = process.env.TESTING ?
+            svg_captcha.create({ size : 1, charPreset : 'a' }) :
+            svg_captcha.create();
+        req.session.captcha =
+        {
+            solution : process.env.TESTING ? 'a' : captcha.text
+        }
+        return captcha.data;
+    }
+    catch(err)
+    {
+        return -1;
+    }
+}
+
+function captcha_is_valid(req)
+{
+    return req.body &&
+        typeof(req.body.captcha_text) === 'string' &&
+        req.body.captcha_text.length &&
+        req.session &&
+        req.session.captcha &&
+        req.session.captcha.solution === req.body.captcha_text;
+}
 
 router.post('/api/0.0.0/user', (req, res) =>
 {
@@ -92,5 +123,135 @@ router.get('/api/0.0.0/user/:id', (req, res) =>
         });
     }
 });
+
+router.get('/api/0.0.0/auth', (req, res) =>
+{
+    let svg = set_captcha_get_svg(req);
+
+    if(svg === -1) return res.status(500).json
+    ({
+        success : false,
+        reason_code : -5,
+        reason_text : 'Server error, retry or contact admin',
+    });
+    else return res.json
+    ({
+        success : true,
+        captcha : svg
+    });
+});
+
+router.post // TODO: write test
+(
+    '/api/0.0.0/login',
+    (req, res, next) =>
+    {
+        if(captcha_is_valid(req)) return next();
+        else
+        {
+            let svg = set_captcha_get_svg(req);
+
+            if(svg === -1) return res.status(500).json
+            ({
+                success : false,
+                reason_code : -5,
+                reason_text : 'Server error, retry or contact admin',
+            });
+            else return res.status(409).json
+            ({
+                success : false,
+                reason_code : -4,
+                reason_text : 'Captcha solution was wrong, retry',
+                captcha : svg
+            });
+        }
+    },
+    (req, res) =>
+    {
+        // FIXME, code reaches here, hangs afterward
+        passport.authenticate
+        (
+            'local',
+            (err, user, info) =>
+            {
+                if(err) // some exception thrown
+                {
+                    console.error('/api/0.0.0/login error:');
+                    console.error(err);
+                    return res.status(500).json
+                    ({
+                        success : false,
+                        reason_code : -6,
+                        reason_text : 'Server error, retry or contact admin',
+                    });
+                }
+                else if(!user) // if auth failed, user is false
+                {
+                    let svg = set_captcha_get_svg(req);
+                    let out =
+                    {
+                        success : false,
+                        reason_code : -7,
+                        reason_text : 'Invalid username and/or password',
+                    }
+
+                    if(svg !== -1)
+                    {
+                        out.captcha = svg;
+                        return res.status(400).json(out);
+                    }
+                    else
+                    {
+                        out.reason_code = -8,
+                        out.reason_text = 'Server error, retry or contact admin';
+                        return res.status(500).json(out);
+                    }
+                }
+                else
+                {
+                    req.logIn(user, (err) =>
+                    {
+                        if(err)
+                        {
+                            console.error('Error logging in');
+                            console.error(err);
+
+                            let out =
+                            {
+                                success : false,
+                                rason_code : -9,
+                                reason_text : 'Server error, retry or contact admin'
+                            }
+
+                            let svg = set_captcha_get_svg(req);
+                            if(svg !== -1) out.captcha = svg;
+
+                            return res.status(500).json(out);
+                        }
+                        else
+                        {
+                            if
+                            (
+                                req.session &&
+                                req.session.captcha &&
+                                req.session.captcha.solution
+                            )
+                            {
+                                delete req.session.captcha.solution;
+                                delete req.session.captcha;
+                            }
+
+                            return res.json
+                            ({
+                                success : true,
+                                id : req.session.passport.user
+                            });
+                        }
+                    });
+                }
+            }
+        );
+    }
+);
 
 module.exports = router;
