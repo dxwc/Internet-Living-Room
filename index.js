@@ -15,6 +15,29 @@ app.use
 app.use(passport.initialize());
 app.use(passport.session());
 
+if(process.env.DEV && !process.env.TESTING)
+{
+    app.use((req, res, next) =>
+    {
+        console.log(req.method, req.originalUrl);
+        if(req.session && req.session.captcha)
+            console.log('Previously set captcha', req.session.captcha);
+        else
+            console.log('No previously set captcha solution found');
+        if(req.method === 'POST')
+            console.log('Request body :', req.body);
+        console.log();
+
+        next();
+    });
+
+    app.use('/test', (req, res) =>
+    {
+        res.sendFile(__dirname + '/test/controller/api_0.0.0_manual_test.html');
+    });
+}
+
+
 app.use(require('./controller/home.js'));
 app.use(require('./controller/api_0.0.0/user.js'));
 app.use(require('./controller/404.js')); // last router to use

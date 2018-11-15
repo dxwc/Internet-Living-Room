@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "npx nodemon index.js",
+    "start": "DEV=true npx nodemon index.js",
     "test": "TESTING=true npx mocha --recursive"
   },
   "dependencies": {
