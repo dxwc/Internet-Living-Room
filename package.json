@@ -4,7 +4,7 @@
     "test": "TESTING=true npx mocha --recursive"
   },
   "dependencies": {
-    "bcrypt-nodejs": "0.0.3",
+    "bcrypt": "3.0.2",
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
     "cookie-parser": "^1.4.3",
