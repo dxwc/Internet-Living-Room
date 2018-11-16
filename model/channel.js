@@ -5,17 +5,18 @@ module.exports = (sequelize, DataTypes) => {
 		id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
-            autoIncrement: true,
+            autoIncrement: true
         },
         host: {
-        	type: DataTypes.STRING,
+        	type: DataTypes.UUID,
         	allowNull: false
         }
 	});
-
+/*
 	Channel.associate = (model) => {
 		model.Channel.hasMany(model.User);
 	}
+	*/
 	return Channel;
 }
 

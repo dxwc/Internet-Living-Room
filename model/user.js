@@ -12,7 +12,10 @@ module.exports = (sequelize, DataTypes) => {
         uname: {
             type : DataTypes.STRING,
             unique : true,
-            allowNull : false
+            allowNull : false,
+            validate: {
+                notEmpty: true, 
+            }
         },
         upass: {
             type : DataTypes.STRING,
@@ -30,10 +33,11 @@ module.exports = (sequelize, DataTypes) => {
             allowNull : true
         },
 		});
-	
+	   //create channel linked to user
         User.asscoiate = (model) => {
             model.Channel.belongsTo(model.User);
         }
+
 	//hashed paswsword
 	 /* User.beforeCreate((user) =>
         new sequelize.Promise((resolve) => {
