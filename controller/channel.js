@@ -10,14 +10,16 @@ router.get('/error', (req, res) => {
 router.post('/new-channel', (req,res) => {
   Channel.create({
     host: req.body.host,
-  }).then((user) => {
+  }).then((channel) => {
     res.json({ msg: "channel created" });
-  }).catch(() => {
+  }).catch((err) => {
+  	console.log(err);
     res.status(400).json({ msg: "error creating channel" });
   });
 });
 
-router.get('/get-channel', (req, res) => {
+//get channels
+router.get('/channels', (req, res) => {
 	res.json({msg: "get channel"});
 });
 
