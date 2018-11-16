@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt-nodejs');
+const bcrypt = require('bcrypt');
 //const sequelize = require('./setup.js');
 //const Sequelize = require('sequelize');
 

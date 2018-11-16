@@ -15,6 +15,11 @@ if (config.use_env_variable) {
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
 
+//fs stand for file system
+//readdirSync gets all the file in model directory
+//filter out index.js, remaining channel.js and user.js
+//for each: iterate over each file, imports the file into the db
+
 fs
   .readdirSync(__dirname)
   .filter(file => {
@@ -22,18 +27,29 @@ fs
   })
   .forEach(file => {
     const model = sequelize.import(path.join(__dirname, file));
+    //this makes the first letter of model name capital
     const modelName = `${model.name.charAt(0).toUpperCase()}${model.name.slice(1)}`;
-    db[modelName] = model;
+   //create db
+   db[modelName] = model;
   });
-
+//invokes association key: foreign key if there is one
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
     db[modelName].associate(db);
   }
 });
 
+
+
+
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
+/*
+this updates tables, but produces errors
+if you want to update data model, you can run this,
+then comment this, and run again
+db.sequelize.sync({force: true});
+*/
 
 module.exports = db;
 

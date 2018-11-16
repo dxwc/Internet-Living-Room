@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
             autoIncrement: true
         },
         host: {
-        	type: DataTypes.UUID,
+        	type: DataTypes.STRING,
         	allowNull: false
         }
 	});
