@@ -1,8 +1,9 @@
-const app      = require('express')();
+const express  = require('express');
+const app      = express();
 const passport = require('./middleware/auth.js');
 
-app.use(require('body-parser').urlencoded({ extended: false }));
-app.use(require('body-parser').json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use
 (
     require('express-session')
