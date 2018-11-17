@@ -1,8 +1,8 @@
-let router = require('express').Router();
-let op     = require('../../model/api_operations');
-let val    = require('validator');
+let router      = require('express').Router();
+let op          = require('../../model/api_operations');
+let val         = require('validator');
 let svg_captcha = require('svg-captcha');
-let passport = require('passport');
+let passport    = require('passport');
 
 function set_captcha_get_svg(req)
 {
@@ -141,7 +141,7 @@ router.get('/api/0.0.0/auth', (req, res) =>
     });
 });
 
-router.post // TODO: write test
+router.post
 (
     '/api/0.0.0/login',
     (req, res, next) =>
@@ -240,10 +240,10 @@ router.post // TODO: write test
                                 delete req.session.captcha;
                             }
 
-                            return res.json
+                            return res.status(200).json
                             ({
                                 success : true,
-                                id : req.session.passport.user
+                                id      : user.id
                             });
                         }
                     });
