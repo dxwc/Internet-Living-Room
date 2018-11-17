@@ -168,13 +168,12 @@ router.post // TODO: write test
     },
     (req, res) =>
     {
-        // FIXME, code reaches here, hangs afterward
         passport.authenticate
         (
             'local',
             (err, user, info) =>
             {
-                if(err) // some exception thrown
+                if(err)
                 {
                     console.error('/api/0.0.0/login error:');
                     console.error(err);
@@ -250,7 +249,7 @@ router.post // TODO: write test
                     });
                 }
             }
-        );
+        )(req, res);
     }
 );
 

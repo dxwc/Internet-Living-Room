@@ -8,7 +8,7 @@ function sign_up
     password
 )
 {
-    return bcrypt.hash(password, process.env.TESTING ? 6 : 12)
+    return bcrypt.hash(password, 8)
     .then((hashed_password) =>
     {
         return model.user.create

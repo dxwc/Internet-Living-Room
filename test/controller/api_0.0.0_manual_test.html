@@ -126,7 +126,8 @@
                     captcha_solution.value = '';
 
                     console.log(res);
-                    if(res.success) login_info = 'Succesfully logged in';
+                    if(res.success)
+                        login_info.innerHTML = 'Succesfully logged in';
                     else if(res.reason_text)
                         login_info.innerHTML = res.reason_text;
                     else login_info.innerHTML = 'Server error';

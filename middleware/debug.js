@@ -3,8 +3,13 @@ module.exports = (app) =>
     app.use((req, res, next) =>
     {
         console.log(req.method, req.originalUrl);
-        if(req.session && req.session.captcha)
-            console.log('Previously set captcha', req.session.captcha);
+        if(req.session)
+        {
+            if(req.session.captcha)
+                console.log('Previously set captcha', req.session.captcha);
+            if(req.session.passport)
+                console.log('passport : ', req.session.passport);
+        }
         else
             console.log('No previously set captcha solution found');
         if(req.method === 'POST')

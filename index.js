@@ -15,6 +15,9 @@ app.use
 );
 app.use(passport.initialize());
 app.use(passport.session());
+// TODO: Consider deleting captcha using a middleware :
+// - if after n minutes or
+// - if user visits non-captcha url
 
 if(process.env.DEV && !process.env.TESTING) require('./middleware/debug.js')(app);
 
