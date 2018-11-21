@@ -4,6 +4,8 @@ const request = require('supertest');
 const val     = require('validator');
 const db      = require('../../model/setup.js');
 
+// TODO: breakup into multiple files
+
 let http_server;
 let created_user_name;
 let created_password;
@@ -366,6 +368,7 @@ describe('TESTING /api/0.0.0/user', () =>
         }
     }
 
+    // TODO: logout after each login attempt
     function login_test_wrapper(done, user_name, password, captcha, expect)
     {
         agent
@@ -527,4 +530,71 @@ describe('TESTING /api/0.0.0/user', () =>
             .catch((err) => done(err));
         }
     );
+
+
+    // ------------------------
+
+    function assert_logout(res)
+    {
+        assert(res.status === 200, 'response status 200');
+        assert(res.body.success === true, '`success` is true');
+        assert
+        (
+            typeof(res.body.was_logged_in) === 'boolean',
+            '`was_logged_in` exists'
+        );
+        return res;
+    }
+
+    it
+    (
+        // 1, 1, 1
+        'should POST for login with known username, known pass with ' +
+        'correct captcha',
+        (done) =>
+        {
+            agent
+            .post('/api/0.0.0/login')
+            .set('Accept', 'application/json')
+            .send
+            ({
+                user_name    : created_user_name,
+                password     : created_password,
+                captcha_text : 'a'
+            })
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .then((res) => assert_login(res))
+            .then(() => done())
+            .catch((err) => done(err));
+        }
+    );
+
+    it('should POST to logout while logged in', (done) =>
+    {
+        agent
+        .post('/api/0.0.0/logout')
+        .expect('Content-Type', /json/)
+        .then((res) => assert_logout(res))
+        .then((res) =>
+        {
+            assert(res.body.was_logged_in === true, 'was logged in is true');
+        })
+        .then(() => done())
+        .catch((err) => done(err));
+    });
+
+    it('should POST to logout while logged out', (done) =>
+    {
+        agent
+        .post('/api/0.0.0/logout')
+        .expect('Content-Type', /json/)
+        .then((res) => assert_logout(res))
+        .then((res) =>
+        {
+            assert(res.body.was_logged_in === false, 'was logged in is false');
+        })
+        .then(() => done())
+        .catch((err) => done(err));
+    });
 });
