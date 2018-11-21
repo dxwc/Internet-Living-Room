@@ -21,9 +21,7 @@ app.use(passport.session());
 
 if(process.env.DEV && !process.env.TESTING) require('./middleware/debug.js')(app);
 
-app.use(require('./controller/home.js'));
-app.use(require('./controller/api_0.0.0/user.js'));
-app.use(require('./controller/404.js')); // last router to use
+app.use(require('./controller/'));
 
 let db = require('./model/setup.js');
 let http_server;
