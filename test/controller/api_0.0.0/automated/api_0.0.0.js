@@ -86,15 +86,29 @@ describe('TESTING /api/0.0.0/user', () =>
         }
     }
 
+    let agent1 = request.agent(require('../../../../index.js').app);
+
+    it('should GET captcha successfully from /api/0.0.0/auth for sign up', (done) =>
+    /* necessary to have before running sign up test to have captcha set to session */
+    {
+        agent1
+        .get('/api/0.0.0/auth')
+        .expect('Content-Type', /json/)
+        .then((res) => assert_get_captcha(res))
+        .then(() => done())
+        .catch((err) => done(err));
+    });
+
     function check_sign_up(done, user_name, password)
     {
-        request(http_server)
+        agent1
         .post('/api/0.0.0/user')
         .set('Accept', 'application/json')
         .send
         ({
             user_name : user_name,
-            password : password
+            password : password,
+            captcha_text : 'a'
         })
         .expect('Content-Type', /json/)
         .then((res) => assert_sign_up(res, user_name, password))
