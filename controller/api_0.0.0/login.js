@@ -78,8 +78,7 @@ router.post('/api/0.0.0/login', c.captcha_control, (req, res) =>
 
                         return res.status(200).json
                         ({
-                            success : true,
-                            id      : user.id
+                            success : true
                         });
                     }
                 });

@@ -22,8 +22,6 @@ function assert_login(res)
     if(res.body.success)
     {
         assert(res.status === 200, 'status should be 200 when `success` is true')
-        assert(typeof(res.body.id) === 'string', 'Receieve user logged in id');
-        assert(val.isUUID(res.body.id, 4), 'User ID is UUID');
     }
     else
     {

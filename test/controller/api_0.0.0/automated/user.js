@@ -19,9 +19,6 @@ function assert_sign_up(res)
     if(res.body.success)
     {
         assert(res.status === 201, '`success` true, so 201');
-        assert(res.body.id, '`success` true, so `id` field exists');
-        assert(typeof(res.body.id) === 'string', '`id` is a string');
-        assert(val.isUUID(res.body.id, 4), '`id` is UUID4');
     }
     else
     {

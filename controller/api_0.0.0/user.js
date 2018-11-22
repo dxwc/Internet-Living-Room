@@ -13,7 +13,7 @@ router.post('/api/0.0.0/user', c.captcha_control, (req, res) =>
         op.sign_up(req.body.user_name, req.body.password)
         .then((id) =>
         {
-            return res.status(201).json({ success : true, id : id });
+            return res.status(201).json({ success : true });
         })
         .catch((err) =>
         {
