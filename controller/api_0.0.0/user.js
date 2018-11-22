@@ -1,6 +1,6 @@
-let router = require('express').Router();
-let op     = require('../../model/api_operations');
-let val    = require('validator');
+let router      = require('express').Router();
+let op          = require('../../model/api_operations');
+let val         = require('validator');
 
 router.post('/api/0.0.0/user', (req, res) =>
 {

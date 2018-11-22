@@ -1,6 +1,7 @@
 const passport = require('passport');
 const Lcl      = require('passport-local').Strategy;
 const model    = require('../model/setup.js');
+const bcrypt   = require('bcrypt');
 
 passport.use
 (
@@ -22,11 +23,11 @@ passport.use
                 if(!res || !res.dataValues)
                     return done(null, false);
                 else
-                    return model.user.verify_user(pass_given)
-                    .then((result) =>
+                    bcrypt.compare(pass_given, res.dataValues.upass)
+                    .then((is_maching) =>
                     {
-                        if(!result) return done(null, false);
-                        else        return done(null, res.dataValues);
+                        if(!is_maching) return done(null, false);
+                        else            return done(null, res.dataValues);
                     })
                     .catch((err) => done(err));
             })
