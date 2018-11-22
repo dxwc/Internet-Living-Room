@@ -207,13 +207,13 @@ function assert_user_info(res)
 module.exports.user_info = (agent) =>
 describe('user info test', () =>
 {
-    it('should successfully GET /api/0.0.0/user/<ID> with valid user ID', (done) =>
+    it('should successfully GET /api/0.0.0/user/<name>', (done) =>
     {
         db.user.findOne() // assumes there exists at least one
         .then((res) =>
         {
             agent
-            .get('/api/0.0.0/user/' + res.dataValues.id)
+            .get('/api/0.0.0/user/' + val.unescape(res.dataValues.uname))
             .expect('Content-Type', /json/)
             .then((res) => assert_user_info(res))
             .then(() => done())
@@ -221,20 +221,10 @@ describe('user info test', () =>
         });
     });
 
-    it('should unsuccessfully GET /api/0.0.0/user/<ID> with valid UUID', (done) =>
+    it('should unsuccessfully GET /api/0.0.0/user/<name>', (done) =>
     {
         agent
-        .get('/api/0.0.0/user/' + faker.random.uuid())
-        .expect('Content-Type', /json/)
-        .then((res) => assert_user_info(res))
-        .then(() => done())
-        .catch((err) => done(err));
-    });
-
-    it('should unsuccessfully GET /api/0.0.0/user/<ID> with invalid UUID', (done) =>
-    {
-        agent
-        .get('/api/0.0.0/user/' + faker.random.alphaNumeric(Math.random() * 100))
+        .get('/api/0.0.0/user/' + faker.internet.userName())
         .expect('Content-Type', /json/)
         .then((res) => assert_user_info(res))
         .then(() => done())

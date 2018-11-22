@@ -1,6 +1,5 @@
 let router      = require('express').Router();
 let op          = require('../../model/api_operations');
-let val         = require('validator');
 let c           = require('./_common.js');
 
 router.post('/api/0.0.0/user', c.captcha_control, (req, res) =>
@@ -53,11 +52,11 @@ router.post('/api/0.0.0/user', c.captcha_control, (req, res) =>
     }
 });
 
-router.get('/api/0.0.0/user/:id', (req, res) =>
+router.get('/api/0.0.0/user/:name', (req, res) =>
 {
-    if(typeof(req.param.id) && val.isUUID(req.params.id, 4))
+    if(typeof(req.params.name) === 'string')
     {
-        op.get_user_info(req.params.id)
+        op.get_user_info(req.params.name)
         .then((result) =>
         {
             result.success = true;
@@ -76,7 +75,7 @@ router.get('/api/0.0.0/user/:id', (req, res) =>
             }
             else
             {
-                console.error('/api/0.0.0/user/:id Error');
+                console.error('/api/0.0.0/user/:name Error');
                 console.error(err);
                 return res.status(500).json
                 ({
@@ -93,7 +92,7 @@ router.get('/api/0.0.0/user/:id', (req, res) =>
         ({
             success : false,
             reason_code : -2,
-            reason_text : 'Invalid request, expected user id'
+            reason_text : 'Invalid request, expected user name'
         });
     }
 });
