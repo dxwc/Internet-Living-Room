@@ -9,21 +9,114 @@
     <form id='frm_sign_up' method='POST' action='/api/0.0.0/user'>
         Username:
         <input
+            id='user_name'
             name='user_name'
             type='text'
             placeholder='Enter a username to test'>
         <br>
         Password:
         <input
+            id='password'
             name='password'
             type='text'
-            name='password'
             placeholder='Enter a password to test'>
         <br>
+        <div id='captcha_node'>Loading Captcha...</div>
+        Captcha solution:
+        <input
+            id='captcha_solution'
+            name='captcha_text'
+            type='text'
+            placeholder='Enter captcha solution'>
+        <br>
         <button
-            type='submit'>
+            id='btn_login'
+            type='button'>
             Send
         </button>
+        <div id='login_info' style='color: grey'></div>
     </form>
+    <script>
+        document.addEventListener('DOMContentLoaded', () =>
+        {
+            let captcha_node = document.getElementById('captcha_node');
+            let login_info = document.getElementById('login_info');
+            let btn_login = document.getElementById('btn_login');
+            let user_name = document.getElementById('user_name');
+            let password = document.getElementById('password');
+            let captcha_solution = document.getElementById('captcha_solution');
+
+            fetch('/api/0.0.0/auth')
+            .then((res) => res.json())
+            .then((res) =>
+            {
+                console.log(res);
+                if(res.success) captcha_node.innerHTML = res.captcha;
+                else if(res.reason_text) login_info.innerHTML = res.reason_text;
+                else login_info.innerHTML = 'Server error';
+            })
+            .catch((err) =>
+            {
+                console.log(err);
+                    login_info.innerHTML = 'Unexpected error, see console.log';
+            });
+
+            btn_login.addEventListener('click', (e) =>
+            {
+                e.preventDefault();
+
+                Promise.resolve()
+                .then(() =>
+                {
+                    login_info.innerHTML = 'Making request...'
+                })
+                .then(() =>
+                {
+                    return fetch
+                    (
+                        '/api/0.0.0/user',
+                        {
+                            method : 'POST',
+                            headers :
+                            {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            },
+                            body : JSON.stringify
+                            ({
+                                user_name : user_name.value,
+                                password : password.value,
+                                captcha_text : captcha_solution.value
+                            })
+                        }
+                    );
+                })
+                .then((res) => res.json())
+                .then((res) =>
+                {
+                    captcha_solution.value = '';
+
+                    console.log(res);
+                    if(res.success)
+                    {
+                        login_info.innerHTML = 'Succesfully signed up';
+                        if(res.id) login_info.innerHTML += '\nUser id: ' + res.id;
+                    }
+                    else if(res.reason_text)
+                        login_info.innerHTML = res.reason_text;
+                    else login_info.innerHTML = 'Server error';
+
+                    if(res.captcha)
+                        captcha_node.innerHTML = res.captcha;
+
+                })
+                .catch((err) =>
+                {
+                    console.log(err);
+                    login_info.innerHTML = 'Unexpected error, see console.log';
+                });
+            });
+        });
+    </script>
 </body>
 </html>
