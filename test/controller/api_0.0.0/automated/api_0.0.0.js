@@ -2,7 +2,7 @@ const faker   = require('faker');
 const assert  = require('assert');
 const request = require('supertest');
 const val     = require('validator');
-const db      = require('../../model/setup.js');
+const db      = require('../../../../model/setup.js');
 
 // TODO: breakup into multiple files
 
@@ -14,7 +14,7 @@ describe('TESTING /api/0.0.0/user', () =>
 {
     before((done) =>
     {
-        require('../../index.js').start()
+        require('../../../../index.js').start()
         .then((res)  => { http_server = res; done(); })
         .catch((err) => { done(err); });
     });
@@ -295,7 +295,7 @@ describe('TESTING /api/0.0.0/user', () =>
         }
     }
 
-    let agent = request.agent(require('../../index.js').app);
+    let agent = request.agent(require('../../../../index.js').app);
 
     it('should GET captcha successfully from /api/0.0.0/auth', (done) =>
     {
