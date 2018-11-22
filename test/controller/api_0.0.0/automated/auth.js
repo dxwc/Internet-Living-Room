@@ -1,4 +1,4 @@
-const assert  = require('assert');
+let assert  = require('assert');
 
 function assert_get_captcha(res)
 {

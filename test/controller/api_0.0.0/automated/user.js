@@ -1,12 +1,10 @@
-const faker   = require('faker');
-const assert  = require('assert');
-const val     = require('validator');
-const db      = require('../../../../model/setup.js');
+let faker   = require('faker');
+let assert  = require('assert');
+let val     = require('validator');
+let db      = require('../../../../model/setup.js');
 
 let created_user_name = faker.internet.userName();
 let created_password = faker.internet.password();
-
-// let agent = request.agent(require('../../../../index.js').app);
 
 function assert_sign_up(res)
 {

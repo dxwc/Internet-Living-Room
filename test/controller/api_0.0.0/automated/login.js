@@ -1,6 +1,5 @@
 const faker   = require('faker');
 const assert  = require('assert');
-const val     = require('validator');
 
 let user_test = require('./user.js');
 
@@ -8,8 +7,6 @@ let created_user_name = user_test.created_user_name;
 let created_password  = user_test.created_password;
 
 // TODO: logout after each login attempt (?)
-
-// let agent = request.agent(require('../../../../index.js').app);
 
 function assert_login(res)
 {
