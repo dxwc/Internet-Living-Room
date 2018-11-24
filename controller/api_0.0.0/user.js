@@ -2,7 +2,8 @@ let router      = require('express').Router();
 let op          = require('../../model/api_operations');
 let c           = require('./_common.js');
 
-router.post('/api/0.0.0/user', c.captcha_control, (req, res) =>
+router.post
+('/api/0.0.0/user', require('../../middleware/captcha_control.js'), (req, res) =>
 {
     if
     (
