@@ -2,6 +2,27 @@ const express  = require('express');
 const app      = express();
 const passport = require('./middleware/auth.js');
 
+global.creators = {};
+/* example :
+{
+    '<user id>' : <channel id>,
+}
+*/
+global.channels = {};
+/* example :
+{
+    '0fe38ca7-9ca3-433d-a464-b5fce48cb798' :
+    {
+        creator : <uid>,
+        current_video : <video id>,
+        video_length  : <seconds>,
+        current_time  : <seconds>,
+        evt : <event obj>,
+        interval_id : <i_id>
+    },
+}
+*/
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use
