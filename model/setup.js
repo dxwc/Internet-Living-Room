@@ -1,5 +1,4 @@
 const Sequelize = require('sequelize');
-const bcrypt    = require('bcrypt');
 
 const sequelize = new Sequelize
 (
@@ -75,6 +74,41 @@ const channel = sequelize.define
     }
 );
 
+const video = sequelize.define
+(
+    'video',
+    {
+        id :
+        {
+            type : Sequelize.TEXT,
+            primaryKey : true,
+            validate :
+            {
+                is  : /^[a-zA-Z0-9_-]+$/, // https://youtu.be/gocwRvLhDf8
+                len : 11
+            }
+        },
+        by : // submitted by
+        {
+            type : Sequelize.UUID,
+            references :
+            {
+                model : user,
+                key : 'id'
+            }
+        },
+        channel : // sent for which channel
+        {
+            type : Sequelize.UUID,
+            references :
+            {
+                model : channel,
+                key : 'id'
+            }
+        }
+    }
+);
+
 function connect()
 {
     return new Promise((resolve, reject) =>
@@ -101,6 +135,7 @@ function connect()
 
 
 module.exports.sequelize = sequelize;
-module.exports.connect = connect;
-module.exports.user = user;
-module.exports.channel = channel;
+module.exports.connect   = connect;
+module.exports.user      = user;
+module.exports.channel   = channel;
+module.exports.video     = video;
