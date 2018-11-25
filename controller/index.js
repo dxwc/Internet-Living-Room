@@ -1,4 +1,4 @@
-let router      = require('express').Router();
+let router = require('express').Router();
 
 router.use(require('./home.js'));
 router.use(require('./channel.js'));

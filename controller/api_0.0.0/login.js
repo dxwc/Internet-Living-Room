@@ -1,6 +1,6 @@
-let router      = require('express').Router();
-let passport    = require('passport');
-let c           = require('./_common.js');
+let router   = require('express').Router();
+let passport = require('passport');
+let c        = require('./_common.js');
 
 router.post
 ('/api/0.0.0/login', require('../../middleware/captcha_control.js'), (req, res) =>

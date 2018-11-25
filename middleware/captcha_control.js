@@ -1,4 +1,5 @@
 let c = require('../controller/api_0.0.0/_common.js');
+
 module.exports = (req, res, next) => // middleware for sign up and login
 {
     if(c.captcha_is_valid(req)) return next();

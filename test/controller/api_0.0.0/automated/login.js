@@ -1,5 +1,5 @@
-const faker   = require('faker');
-const assert  = require('assert');
+const faker  = require('faker');
+const assert = require('assert');
 
 let user_test = require('./user.js');
 
