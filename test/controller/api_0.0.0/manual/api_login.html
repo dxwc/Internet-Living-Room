@@ -3,36 +3,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Manual Post Test</title>
+    <title>API LOGIN TEST</title>
 </head>
 <body>
-    <h3>
-        This should be ran after `npm run dev` and by going to `/test` route
-    </h3>
-    <hr>
-    <h3>Manual test for user sign up API</h3>
-    <form id='frm_sign_up' method='POST' action='/api/0.0.0/user'>
-        Username:
-        <input
-            name='user_name'
-            type='text'
-            placeholder='Enter a username to test'>
-        <br>
-        Password:
-        <input
-            name='password'
-            type='text'
-            name='password'
-            placeholder='Enter a password to test'>
-        <br>
-        <button
-            type='submit'>
-            Send
-        </button>
-    </form>
-
-    <hr>
-
     <h3>Manual test for user login API</h3>
     <form id='frm_login' method='POST' action='/api/0.0.0/login'>
         Username:
@@ -64,13 +37,6 @@
             Send
         </button>
         <div id='login_info' style='color: grey'></div>
-    </form>
-
-    <hr>
-
-    <h3>Manual test for logout API</h3>
-    <form method='POST' action='/api/0.0.0/logout'>
-        <button type='submit'>Logout</button>
     </form>
 
     <script>
@@ -154,3 +120,5 @@
     </script>
 </body>
 </html>
+
+

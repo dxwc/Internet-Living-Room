@@ -19,15 +19,53 @@ module.exports = (app) =>
         next();
     });
 
+    let path = require('path');
+
     app.use('/test', (req, res) =>
     {
-        return res.sendFile
-        (
-            require('path').join
+        if(req.originalUrl === '/test/api_sign_up')
+        {
+            return res.sendFile
             (
-                __dirname,
-                '../test/controller/api_0.0.0_manual_test.html'
-            )
-        );
+                path.join
+                (
+                    __dirname,
+                    '../test/controller/api_0.0.0/manual/api_sign_up.html'
+                )
+            );
+        }
+        else if(req.originalUrl === '/test/api_login')
+        {
+            return res.sendFile
+            (
+                path.join
+                (
+                    __dirname,
+                    '../test/controller/api_0.0.0/manual/api_login.html'
+                )
+            );
+        }
+        else if(req.originalUrl === '/test/api_logout')
+        {
+            return res.sendFile
+            (
+                path.join
+                (
+                    __dirname,
+                    '../test/controller/api_0.0.0/manual/api_logout.html'
+                )
+            );
+        }
+        else
+        {
+            return res.sendFile
+            (
+                path.join
+                (
+                    __dirname,
+                    '../test/controller/api_0.0.0/manual/api_index.html'
+                )
+            );
+        }
     });
 }

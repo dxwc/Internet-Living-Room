@@ -1,8 +1,9 @@
 let router      = require('express').Router();
 let op          = require('../../model/api_operations');
 let val         = require('validator');
+let c           = require('./_common.js');
 
-router.post('/api/0.0.0/user', (req, res) =>
+router.post('/api/0.0.0/user', c.captcha_control, (req, res) =>
 {
     if
     (
@@ -19,12 +20,16 @@ router.post('/api/0.0.0/user', (req, res) =>
         {
             if(err.code === 'USER_EXISTS')
             {
-                return res.status(200).json
-                ({
+                let out = {
                     success : false,
                     reason_code : -1,
                     reason_text : 'Username is not available'
-                });
+                };
+
+                let svg = c.set_captcha_get_svg(req);
+                if(svg !== -1) out.captcha = svg;
+
+                return res.status(200).json(out);
             }
             else
             {
