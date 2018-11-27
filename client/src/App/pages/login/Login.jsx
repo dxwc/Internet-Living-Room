@@ -1,6 +1,9 @@
+
+
+//still need to complete the action for login
 import React from "react";
 import { Link } from 'react-router-dom';
-import { Button, Modal, Form, Input, Icon, Checkbox } from 'antd';
+import { Button, Modal, Form, Input, Icon, Checkbox, Row, Col } from 'antd';
 
 const FormItem = Form.Item;
 
@@ -33,17 +36,29 @@ const CollectionCreateForm = Form.create()(
               )}
             </FormItem>
             <FormItem>
-              {getFieldDecorator('remember', {
-                valuePropName: 'checked',
-                initialValue: true,
-              })(
-                <Checkbox>Remember me</Checkbox>
-              )}
-              <a className="login-form-forgot" href="">Forgot password</a>
-              <Button type="primary" htmlType="submit" className="login-form-button">
-                Log in
-              </Button>
-              Or <Link to='./register'>register now!</Link>
+              <Row type="flex" style={{margin: "10px 0px"}}>
+                <Col span={12}>
+                  {getFieldDecorator('remember', {
+                    valuePropName: 'checked',
+                    initialValue: true,
+                  })(
+                    <Checkbox>Remember me</Checkbox>
+                  )}
+                </Col>
+                <Col span={12}>
+                  <a className="login-form-forgot" href="">Forgot password</a>
+                </Col>
+              </Row>
+              <Row style={{margin: "10px 0px"}}>
+                <Col span={24}>
+                  <Button type="primary" htmlType="submit" className="login-form-button">
+                    Log in
+                  </Button>
+                </Col>
+              </Row>
+              <Row style={{margin: "10px 0px"}}>
+                Or <Link to='./register'>register now!</Link>
+              </Row>
             </FormItem>
           </Form>
         </Modal>

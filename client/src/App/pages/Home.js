@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import LoginPage from './login/Login.jsx';
-import { Layout, Menu, Breadcrumb, Card, Row, Col } from 'antd';
+import { Layout, Breadcrumb, Card, Row, Col } from 'antd';
 
 const { Header, Content, Footer } = Layout;
 

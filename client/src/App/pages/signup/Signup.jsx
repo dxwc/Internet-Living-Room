@@ -1,9 +1,7 @@
 import React from 'react';
-import { Form, Input, Tooltip, Icon, Select, Row, Col, Checkbox, Button, AutoComplete } from 'antd';
+import { Form, Input, Tooltip, Icon, Row, Col, Checkbox, Button } from 'antd';
 
 const FormItem = Form.Item;
-const Option = Select.Option;
-const AutoCompleteOption = AutoComplete.Option;
 
 class RegistrationForm extends React.Component {
   state = {
@@ -42,19 +40,8 @@ class RegistrationForm extends React.Component {
     callback();
   }
 
-  handleWebsiteChange = (value) => {
-    let autoCompleteResult;
-    if (!value) {
-      autoCompleteResult = [];
-    } else {
-      autoCompleteResult = ['.com', '.org', '.net'].map(domain => `${value}${domain}`);
-    }
-    this.setState({ autoCompleteResult });
-  }
-
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { autoCompleteResult } = this.state;
 
     const formItemLayout = {
       labelCol: {
@@ -78,18 +65,6 @@ class RegistrationForm extends React.Component {
         },
       },
     };
-    const prefixSelector = getFieldDecorator('prefix', {
-      initialValue: '86',
-    })(
-      <Select style={{ width: 70 }}>
-        <Option value="86">+86</Option>
-        <Option value="87">+87</Option>
-      </Select>
-    );
-
-    const websiteOptions = autoCompleteResult.map(website => (
-      <AutoCompleteOption key={website}>{website}</AutoCompleteOption>
-    ));
 
     return (
       <Form onSubmit={this.handleSubmit}>
