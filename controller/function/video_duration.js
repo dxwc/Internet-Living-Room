@@ -1,4 +1,5 @@
-let URL = require('url').URL;
+let http = require('https');
+let URL  = require('url').URL;
 
 /**
  * @param {String} url - youtube video watch URL
@@ -32,4 +33,24 @@ function get_id(url)
     }
 }
 
-module.exports.get_id = get_id;
+/**
+ * @param {String} url - youtube video watch URL
+ * @returns {Promise} Resolves with the downloaded content, reject on error
+ */
+function download(url)
+{
+    return new Promise((resolve, reject) =>
+    {
+        let data = '';
+        http.get(url, (res) =>
+        {
+            res.on('data',  (chunk) => data += chunk);
+            res.on('end',   ()      => resolve(data));
+            res.on('error', (err)   => reject(err));
+        })
+        .on(('error'), (err) => reject(err));
+    });
+}
+
+module.exports.get_id   = get_id;
+module.exports.download = download;
