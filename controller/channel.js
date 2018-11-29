@@ -2,6 +2,7 @@ let router = require('express').Router();
 let uuid   = require('uuid/v4');
 let Event  = require('events');
 let val    = require('validator');
+let op     = require('../model/api_operations');
 
 router.get('/channel/:id', (req, res) =>
 {
@@ -51,37 +52,37 @@ router.get('/channel/:id', (req, res) =>
 
 router.get('/channel', require('../middleware/logged_in_only.js'), (req, res) =>
 {
-    try
+    // FIXME
+    op.create_channel(req.session.passport.user.id)
+    .then((channel_id) =>
     {
-        let an_uuid = uuid();
-        while(global.channels.hasOwnProperty(an_uuid)) an_uuid = uuid();
-
-        if(global.creators[req.session.passport.user.id])
-        // delete previous channel for this user if existed
-        {
-            delete global.channels[global.creators[req.session.passport.user.id]];
-        }
-
-        global.creators[req.session.passport.user.id] = an_uuid;
-        global.channels[an_uuid] =
+        global.creators[req.session.passport.user.id] = channel_id;
+        global.channels[channel_id] =
         {
             creator : req.session.passport.user.id,
             evt : new Event(),
-            current_video : 'sdkfjsdf',
-            current_time  : 32, // seconds
-            video_length  : 36,
+            // current_video : <video id>,
+            // current_time  : <time in second>l
+            // video_length  : <total time in seconds>,
             interval_id : setInterval(() =>
             {
                 this.evt.eventNames().forEach((name) =>
                 {
-                    // 1. if video_length - 1 > current_time
-                    //      - this.evt.emit
-                    //        (name, this.current_video, ++this.current_time)
-                    // 2. else fetch next video and length from db, save to property
-                    //      - this.evt.emit
-                    //        (name, this.current_video, ++this.current_time)
+                    if(this.video_length - 1 > current_time)
+                    // while video is not done, update current time by 1 second, every
+                    // second interval
+                    {
+                        this.evt.emit(name, this.current_video, ++this.current_time);
+                    }
+                    else
+                    {
+                        this.current_time = 0;
+                        // TODO: fetch next video and length from db, save to property
+                        // do not emit, emit in the next iteration
+                    }
+
                 });
-            })
+            }, 1000)
         };
 
         return res.json
@@ -89,8 +90,8 @@ router.get('/channel', require('../middleware/logged_in_only.js'), (req, res) =>
             success : true,
             channel_id : an_uuid
         });
-    }
-    catch(err)
+    })
+    .catch((err) =>
     {
         console.error(err);
         return res.status(500).json
@@ -99,7 +100,7 @@ router.get('/channel', require('../middleware/logged_in_only.js'), (req, res) =>
             reason_code : -77,
             reason_code : 'Error creating channel'
         });
-    }
+    });
 });
 
 module.exports = router;

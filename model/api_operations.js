@@ -66,5 +66,14 @@ function get_user_info(name)
     });
 }
 
-module.exports.sign_up = sign_up;
-module.exports.get_user_info = get_user_info;
+function create_channel(user_id)
+{
+    return model.channel.destroy({ where : { host : user_id }})
+    .then(() => model.channel.create({ host : user_id }))
+    .then((res) => res.dataValues.id)
+    .catch((err) => { throw err });
+}
+
+module.exports.sign_up        = sign_up;
+module.exports.get_user_info  = get_user_info;
+module.exports.create_channel = create_channel;
