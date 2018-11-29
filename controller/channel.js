@@ -6,6 +6,7 @@ let op     = require('../model/api_operations');
 
 router.get('/channel/:id', (req, res) =>
 {
+    // TODO
     if
     (
         val.isUUID(req.params.id, 4) &&
@@ -51,44 +52,26 @@ router.get('/channel/:id', (req, res) =>
 });
 
 router.get('/channel', require('../middleware/logged_in_only.js'), (req, res) =>
+// TODO: consider making this a POST request
 {
-    // FIXME
+    // op.create_channel will delete any previous channel by same before creating
     op.create_channel(req.session.passport.user.id)
     .then((channel_id) =>
     {
+        // if previous channel by same host exists, delete :
+        delete global.channels[global.creators[req.session.passport.user.id]];
+
         global.creators[req.session.passport.user.id] = channel_id;
         global.channels[channel_id] =
         {
             creator : req.session.passport.user.id,
-            evt : new Event(),
-            // current_video : <video id>,
-            // current_time  : <time in second>l
-            // video_length  : <total time in seconds>,
-            interval_id : setInterval(() =>
-            {
-                this.evt.eventNames().forEach((name) =>
-                {
-                    if(this.video_length - 1 > current_time)
-                    // while video is not done, update current time by 1 second, every
-                    // second interval
-                    {
-                        this.evt.emit(name, this.current_video, ++this.current_time);
-                    }
-                    else
-                    {
-                        this.current_time = 0;
-                        // TODO: fetch next video and length from db, save to property
-                        // do not emit, emit in the next iteration
-                    }
-
-                });
-            }, 1000)
+            evt : new Event()
         };
 
         return res.json
         ({
             success : true,
-            channel_id : an_uuid
+            channel_id : channel_id
         });
     })
     .catch((err) =>

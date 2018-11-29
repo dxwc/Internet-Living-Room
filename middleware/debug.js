@@ -14,6 +14,8 @@ module.exports = (app) =>
             console.log('No previously set captcha solution found');
         if(req.method === 'POST')
             console.log('Request body :', req.body);
+        console.log('Number of channels:', Object.keys(global.channels).length);
+        console.log('Number of hosts:', Object.keys(global.creators).length);
         console.log();
 
         next();

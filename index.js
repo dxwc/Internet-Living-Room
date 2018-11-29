@@ -17,11 +17,35 @@ global.channels = {};
         current_video : <video id>,
         video_length  : <seconds>,
         current_time  : <seconds>,
-        evt : <event obj>,
-        interval_id : <i_id>
+        evt : <event obj>
     },
 }
 */
+
+/* send out data to each channel every second */
+setInterval(() =>
+{
+    for(obj in global.channels)
+    {
+        if(!obj.current_video) continue;
+
+        ++obj.current_time;
+
+        obj.evt.eventNames().forEach((connected_user) =>
+        {
+            if(obj.video_length - 1 <= obj.current_time)
+            {
+                obj.current_time = 0;
+                // TODO: fetch next video and length from db
+                // Replace obj.current_video and obj.video_length
+                // Do not emit; emit in the next iteration
+            }
+
+            obj.evt.emit(connected_user, obj.current_video, obj.current_time);
+        });
+    }
+}, 1000);
+
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
