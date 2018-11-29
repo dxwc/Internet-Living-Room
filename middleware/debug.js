@@ -58,6 +58,17 @@ module.exports = (app) =>
                 )
             );
         }
+        else if(req.originalUrl === '/test/channel_connect')
+        {
+            return res.sendFile
+            (
+                path.join
+                (
+                    __dirname,
+                    '../test/controller/channel_connect.html'
+                )
+            );
+        }
         else
         {
             return res.sendFile

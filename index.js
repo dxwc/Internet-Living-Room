@@ -17,7 +17,7 @@ global.channels = {};
         current_video : <video id>,
         video_length  : <seconds>,
         current_time  : <seconds>,
-        evt : <event obj>
+        evt : <event ch_id>
     },
 }
 */
@@ -25,23 +25,38 @@ global.channels = {};
 /* send out data to each channel every second */
 setInterval(() =>
 {
-    for(obj in global.channels)
+    for(ch_id in global.channels)
     {
-        if(!obj.current_video) continue;
-
-        ++obj.current_time;
-
-        obj.evt.eventNames().forEach((connected_user) =>
+        console.log('-->', global.channels[ch_id]);
+        // TOFIX: make database call per event/channel instead of per user
+        global.channels[ch_id].evt.eventNames().forEach((connection) =>
         {
-            if(obj.video_length - 1 <= obj.current_time)
+            if(!global.channels[ch_id].current_video)
+            // when user creates channel, but haven't submitted video yet
             {
-                obj.current_time = 0;
-                // TODO: fetch next video and length from db
-                // Replace obj.current_video and obj.video_length
-                // Do not emit; emit in the next iteration
+                global.channels[ch_id].evt.emit(connection, null, null);
+            }
+            else
+            {
+                if
+                (
+                    global.channels[ch_id].video_length - 1 <=
+                    global.channels[ch_id].current_time)
+                {
+                    global.channels[ch_id].current_time = 0;
+                    // TODO: fetch next video and length from db
+                    // Replace ch_id.current_video and ch_id.video_length
+                    // Do not emit; emit in the next iteration
+                }
+
+                global.channels[ch_id].evt.emit
+                (
+                    connection,
+                    global.channels[ch_id].current_video,
+                    global.channels[ch_id].current_time
+                );
             }
 
-            obj.evt.emit(connected_user, obj.current_video, obj.current_time);
         });
     }
 }, 1000);

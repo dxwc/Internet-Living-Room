@@ -5,8 +5,9 @@ let val    = require('validator');
 let op     = require('../model/api_operations');
 
 router.get('/channel/:id', (req, res) =>
+// TODO: allow one connection per user to a channel, or very few user can attempt
+// a DOS attack
 {
-    // TODO
     if
     (
         val.isUUID(req.params.id, 4) &&
@@ -29,18 +30,20 @@ router.get('/channel/:id', (req, res) =>
                     {
                         video_id : video_id,
                         play_at : play_at,
-                        users_recieving : the_channel.evt.eventNames().length-1
+                        users_recieving : the_channel.evt.eventNames().length
                     }
                 )}\n\n`
             );
         }
 
+        // not <user id> to allow non-registered user can connect as well
         let evt_on_name = uuid();
 
-        evt.on(evt_on_name, event_listener);
+        the_channel.evt.on(evt_on_name, event_listener);
         res.on('close', () =>
         {
-            the_channel.evt.removeListener(evt_on_name, event_listener);
+            if(global.channels.hasOwnProperty(req.params.id))
+                the_channel.evt.removeListener(evt_on_name, event_listener);
         });
     }
     else return res.status(404).json

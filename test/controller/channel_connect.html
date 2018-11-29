@@ -1,0 +1,58 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Channel Connection Test (run after `npm run dev`)</title>
+</head>
+<body>
+    <h4>See console.log</h4>
+    <input
+        id='ch_id'
+        type='text'
+        placeholder='Enter a channel id'
+        required>
+    <button
+        id='btn'
+        type='button'>Connect</button>
+    <br>
+    <br>
+    <button
+        id='stop'
+        type='button'>End connection</button>
+    <script>
+
+        let ch_id = document.getElementById('ch_id');
+
+        let sse;
+
+        document.getElementById('btn').addEventListener('click', (e) =>
+        {
+            e.preventDefault();
+
+            console.log('Attempting to establish a sse connection')
+
+            sse = (new EventSource('/channel/' + ch_id.value));
+
+            sse.onmessage = (ev) =>
+            {
+                console.log('Data:');
+                console.log(JSON.parse(ev.data));
+            }
+
+            sse.onerror = (e) => console.log('Error', e);
+        });
+
+        document.getElementById('stop').addEventListener('click', (e) =>
+        {
+            e.preventDefault();
+
+            console.log('Stopping sse connection if exists');
+
+            if(sse) sse.close();
+            sse = null;
+        });
+
+    </script>
+</body>
+</html>
