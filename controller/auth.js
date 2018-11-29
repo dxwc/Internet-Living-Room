@@ -12,29 +12,33 @@ router.get('/error', (req, res) => {
 
 router.post('/signup', (req,res) => {
   User.create({
-    uname: req.body.uname,
-    upass: req.body.upass,
     fname: req.body.fname,
     lname: req.body.lname,
+    uname: req.body.uname,
+    upass: req.body.upass,
   }).then((user) => {
-    res.json({ msg: "user created" });
+    res.status(200).json({ msg: "user created" });
   }).catch(() => {
+    //id still increment if it produces error
     res.status(400).json({ msg: "error creating user" });
   });
 });
 
-
+/*
 router.post('/login',
   passport.authenticate('local', { failureRedirect: '/auth/error' }),
   (req, res) => {
     res.json({
       id: req.user.id,
-      firstName: req.user.firstName,
-      lastName: req.user.lastName,
-      email: req.user.email,
+      fname: req.user.firstName,
+      uname: req.user.uastName,
     });
   });
-
+*/
+router.post('/login',  passport.authenticate('local', { failureRedirect: '/auth/error' }), 
+  (req, res) => {
+    res.status(200).json({ msg: "login successful"});
+});
 
 router.get('/logout', (req, res) => {
   req.logout();

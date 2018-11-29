@@ -2,6 +2,7 @@ let router = require('express').Router();
 let op     = require('../../model/api_operations');
 let val    = require('validator');
 
+//separate post and get
 router.post('/api/0.0.0/user', (req, res) =>
 {
     if
