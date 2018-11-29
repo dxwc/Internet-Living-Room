@@ -1,6 +1,8 @@
 let http = require('https');
 let URL  = require('url').URL;
 
+// TODO: promisify all functions here to easily collect all errors in one place
+
 /**
  * @param {String} url - youtube video watch URL
  * @returns {?String} if valid, returns video id, else null
@@ -52,5 +54,56 @@ function download(url)
     });
 }
 
-module.exports.get_id   = get_id;
-module.exports.download = download;
+function parse_length(data)
+{
+    try
+    {
+        let loc1 = data.indexOf(`"length_seconds":"`);
+        let loc2 = data.indexOf('"', loc1 + 18);
+
+        if(loc1 === -1 || loc2 === -1) return null;
+
+        let seconds = Number(data.substr(loc1 + 18, loc2 - (loc1 + 18)));
+
+        return !isNaN(seconds) ? seconds : null;
+    }
+    catch(err)
+    {
+        return null;
+    }
+}
+
+/**
+ * Get video id and length
+ * @param {String} url - youtube video watch URL
+ * @returns {Promise} resolves with an object containing id and length in seconds
+ */
+function get_info(url)
+{
+    return new Promise((resolve, reject) =>
+    {
+        let id = get_id(url);
+        if(!id)
+        {
+            let err = new Error('Invalid URL');
+            err.code = 'INVALID_URL';
+            return reject(err);
+        }
+
+        download('https://www.youtube.com/watch?v=' + id)
+        .then((page) => parse_length(page))
+        .then((len) =>
+        {
+            if(len) return resolve({ id : id, length : len });
+            else
+            {
+                let err = new Error(`Couldn't extract length from downloaded`);
+                err.code = 'PARSE_ERROR';
+                return reject(err);
+            }
+        })
+        .catch((err) => reject(err));
+    });
+}
+
+module.exports = get_info;
