@@ -2,14 +2,12 @@ const User = require("./user.js");
 //const Sequelize = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
 	const Channel = sequelize.define('channel', {
-		id: {
-            type: DataTypes.INTEGER,
-            primaryKey: true,
-            autoIncrement: true
-        },
         host: {
         	type: DataTypes.STRING,
         	allowNull: false
+        },
+        description: {
+        	type: DataTypes.STRING,
         }
 	});
 /*

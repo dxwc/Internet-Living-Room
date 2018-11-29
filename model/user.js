@@ -6,11 +6,6 @@ const saltRounds = 10;
 
 module.exports = (sequelize, DataTypes) => {
 	const User = sequelize.define('user', {
-		id: {
-            type : DataTypes.INTEGER,
-            primaryKey: true,
-            autoIncrement: true,
-        },
         fname: {
             type : DataTypes.STRING,
             allowNull : true

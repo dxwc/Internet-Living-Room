@@ -4,8 +4,8 @@ const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
 const basename = path.basename(__filename);
-const env = 'development';
-const config = require('../config/config.json')['development'];
+const env = process.env.NODE_ENV || 'development';
+const config = require('../config/config.json')[env];
 const db = {};
 
 let sequelize;
@@ -48,8 +48,9 @@ db.Sequelize = Sequelize;
 this updates tables, but produces errors
 if you want to update data model, you can run this,
 then comment this, and run again
-db.sequelize.sync({force: true});
 */
+db.sequelize.sync();
+
 
 module.exports = db;
 
