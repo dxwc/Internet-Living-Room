@@ -11,18 +11,16 @@ function passwordsMatch(passwordSubmitted, storedPassword) {
 passport.use(new LocalStrategy({
     usernameField: 'uname',
   },
-  (uname, upass, done) => {
+  (uname, password, done) => {
     User.findOne({
       where: { uname },
     }).then((user) => {
       if(!user) {
         return done(null, false, { message: 'Incorrect email.' });
       }
-
-      if (passwordsMatch(password, user.password_hash) === false) {
+      if (passwordsMatch(password, user.upass_hash) === false) {
         return done(null, false, { message: 'Incorrect password.' });
       }
-
       return done(null, user, { message: 'Successfully Logged In!' });
     });
   })
@@ -37,7 +35,7 @@ passport.deserializeUser((id, done) => {
     if (!user) {
       return done(null, false);
     }
-
+    
     return done(null, user);
   });
 });
