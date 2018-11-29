@@ -23,7 +23,7 @@ global.channels = {};
 */
 
 /* send out data to each channel every second */
-setInterval(() =>
+if(!process.env.TESTING) setInterval(() =>
 {
     for(ch_id in global.channels)
     {
