@@ -13,11 +13,11 @@ global.channels = {};
 {
     '0fe38ca7-9ca3-433d-a464-b5fce48cb798' :
     {
-        creator : <uid>,
+        creator       : <uid>,
         current_video : <video id>,
+        start_time    : <new Date().getTime()>,
         video_length  : <seconds>,
-        current_time  : <seconds>,
-        evt : <event ch_id>
+        evt           : <event ch_id>
     },
 }
 */
@@ -27,39 +27,42 @@ if(!process.env.TESTING) setInterval(() =>
 {
     for(ch_id in global.channels)
     {
-        console.log('-->', global.channels[ch_id]);
-        // TOFIX: make database call per event/channel instead of per user
         global.channels[ch_id].evt.eventNames().forEach((connection) =>
         {
-            if(!global.channels[ch_id].current_video)
-            // when user creates channel, but haven't submitted video yet
+            if
+            (
+                !global.channels[ch_id].current_video ||
+                !global.channels[ch_id].start_time    ||
+                !global.channels[ch_id].video_length  ||
+                (
+                    (global.channels[ch_id].video_length || 0) <
+                    (new Date().getTime() - (global.channels[ch_id].start_time || 0))
+                )
+            )
             {
-                global.channels[ch_id].evt.emit(connection, null, null);
+                // get next video, update and emit, if none,
+                // send XOacA3RYrXk, 200, 200
+                global.channels[ch_id].evt.emit
+                (
+                    connection,
+                    'XOacA3RYrXk',
+                    200,
+                    200
+                );
             }
             else
             {
-                if
-                (
-                    global.channels[ch_id].video_length - 1 <=
-                    global.channels[ch_id].current_time)
-                {
-                    global.channels[ch_id].current_time = 0;
-                    // TODO: fetch next video and length from db
-                    // Replace ch_id.current_video and ch_id.video_length
-                    // Do not emit; emit in the next iteration
-                }
-
                 global.channels[ch_id].evt.emit
                 (
                     connection,
                     global.channels[ch_id].current_video,
-                    global.channels[ch_id].current_time
+                    global.channels[ch_id].start_time,
+                    global.channels[ch_id].video_length
                 );
             }
-
         });
     }
-}, 1000);
+}, 2000);
 
 
 app.use(express.urlencoded({ extended: true }));

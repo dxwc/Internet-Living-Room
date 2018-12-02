@@ -20,8 +20,10 @@ router.get('/channel/:id', (req, res) =>
         res.setHeader('Content-Type', 'text/event-stream');
         res.setHeader('Connection', 'keep-alive');
 
-        function event_listener(video_id, play_at)
+        function event_listener(video_id, start_time, video_length)
         {
+            if(!video_id || !start_time || !video_length) return;
+
             res.write
             (
                 `data: ${
@@ -29,7 +31,9 @@ router.get('/channel/:id', (req, res) =>
                 (
                     {
                         video_id : video_id,
-                        play_at : play_at,
+                        play_at : video_id === 'XOacA3RYrXk' ?
+                                    null :
+                                    new Date().getTime() - start_time,
                         users_recieving : the_channel.evt.eventNames().length
                     }
                 )}\n\n`
