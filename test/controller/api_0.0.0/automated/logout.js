@@ -1,4 +1,4 @@
-const assert  = require('assert');
+let assert  = require('assert');
 
 let user_test = require('./user.js');
 
@@ -16,8 +16,6 @@ function assert_logout(res)
     );
     return res;
 }
-
-// let agent = request.agent(require('../../../../index.js').app);
 
 module.exports.run = (agent) =>
 describe('logout test', () =>

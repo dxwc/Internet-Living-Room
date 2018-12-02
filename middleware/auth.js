@@ -2,6 +2,7 @@ const passport = require('passport');
 const Lcl      = require('passport-local').Strategy;
 const model    = require('../model/setup.js');
 const bcrypt   = require('bcrypt');
+const val      = require('validator');
 
 passport.use
 (
@@ -16,7 +17,7 @@ passport.use
             return model.user.findOne
             ({
                 where : { uname : uname_given },
-                attributes : ['id', 'upass']
+                attributes : ['id', 'upass', 'uname']
             })
             .then((res) =>
             {
@@ -26,6 +27,9 @@ passport.use
                     bcrypt.compare(pass_given, res.dataValues.upass)
                     .then((is_maching) =>
                     {
+                        res.dataValues.uname = res.dataValues.uname ?
+                                        val.unescape(res.dataValues.uname) :
+                                        res.dataValues.uname;
                         if(!is_maching) return done(null, false);
                         else            return done(null, res.dataValues);
                     })
@@ -36,20 +40,23 @@ passport.use
     )
 );
 
-passport.serializeUser((user, done) => done(null, user.id));
-passport.deserializeUser((id, done) =>
+passport.serializeUser((user, done) =>
+// runs after authentication, user object is recieved from done() from the local
+// strtegy setup above
 {
-    model.user.findOne
-    ({
-        where : { id : id },
-        attributes : ['uname', 'fname', 'lname', 'createdAt']
-    })
-    .then((res) =>
-    {
-        if(res && res.dataValues) done(null, res.dataValues);
-        else                      done(null, false);
-    })
-    .catch((err) => done(err));
+    done(null, { id : user.id, uname : user.uname });
+    // on requests after user is logged in, the data on second parameter will be
+    // saved to req.session.passport
+});
+passport.deserializeUser((user, done) =>
+// runs every subsequest request and gets data from what was returned to done()
+// from serializeUser
+{
+    done(null, true);
+    // not passing data here but dummy 'true' as there is no need for duplicate copies
+    // of data or hitting db.
+    // Note: if the second parameter is not 'truthy', breaks since second parameter
+    // is set to req.user and used to check if user is logged in or not
 });
 
 module.exports = passport;

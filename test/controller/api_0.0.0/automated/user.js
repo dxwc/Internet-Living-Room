@@ -1,12 +1,10 @@
-const faker   = require('faker');
-const assert  = require('assert');
-const val     = require('validator');
-const db      = require('../../../../model/setup.js');
+let faker   = require('faker');
+let assert  = require('assert');
+let val     = require('validator');
+let db      = require('../../../../model/setup.js');
 
 let created_user_name = faker.internet.userName();
 let created_password = faker.internet.password();
-
-// let agent = request.agent(require('../../../../index.js').app);
 
 function assert_sign_up(res)
 {
@@ -19,9 +17,6 @@ function assert_sign_up(res)
     if(res.body.success)
     {
         assert(res.status === 201, '`success` true, so 201');
-        assert(res.body.id, '`success` true, so `id` field exists');
-        assert(typeof(res.body.id) === 'string', '`id` is a string');
-        assert(val.isUUID(res.body.id, 4), '`id` is UUID4');
     }
     else
     {
@@ -207,13 +202,13 @@ function assert_user_info(res)
 module.exports.user_info = (agent) =>
 describe('user info test', () =>
 {
-    it('should successfully GET /api/0.0.0/user/<ID> with valid user ID', (done) =>
+    it('should successfully GET /api/0.0.0/user/<name>', (done) =>
     {
         db.user.findOne() // assumes there exists at least one
         .then((res) =>
         {
             agent
-            .get('/api/0.0.0/user/' + res.dataValues.id)
+            .get('/api/0.0.0/user/' + val.unescape(res.dataValues.uname))
             .expect('Content-Type', /json/)
             .then((res) => assert_user_info(res))
             .then(() => done())
@@ -221,20 +216,10 @@ describe('user info test', () =>
         });
     });
 
-    it('should unsuccessfully GET /api/0.0.0/user/<ID> with valid UUID', (done) =>
+    it('should unsuccessfully GET /api/0.0.0/user/<name>', (done) =>
     {
         agent
-        .get('/api/0.0.0/user/' + faker.random.uuid())
-        .expect('Content-Type', /json/)
-        .then((res) => assert_user_info(res))
-        .then(() => done())
-        .catch((err) => done(err));
-    });
-
-    it('should unsuccessfully GET /api/0.0.0/user/<ID> with invalid UUID', (done) =>
-    {
-        agent
-        .get('/api/0.0.0/user/' + faker.random.alphaNumeric(Math.random() * 100))
+        .get('/api/0.0.0/user/' + faker.internet.userName())
         .expect('Content-Type', /json/)
         .then((res) => assert_user_info(res))
         .then(() => done())
