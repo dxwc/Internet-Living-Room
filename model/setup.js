@@ -78,7 +78,7 @@ const video = sequelize.define
 (
     'video',
     {
-        id :
+        id : // video id extracted from url
         {
             type : Sequelize.TEXT,
             primaryKey : true,
@@ -88,7 +88,26 @@ const video = sequelize.define
                 len : 11
             }
         },
-        by : // submitted by
+        channel : // sent for which created channel
+        {
+            type : Sequelize.UUID,
+            primaryKey : true,
+            references :
+            {
+                model : channel,
+                key : 'id'
+            }
+        },
+        length : // duration in seconds
+        {
+            type : Sequelize.INTEGER,
+            allowNull : false,
+            validate :
+            {
+                min : 0
+            }
+        },
+        by : // submitted by user
         {
             type : Sequelize.UUID,
             references :
@@ -97,14 +116,11 @@ const video = sequelize.define
                 key : 'id'
             }
         },
-        channel : // sent for which channel
+        vote : // vote count
         {
-            type : Sequelize.UUID,
-            references :
-            {
-                model : channel,
-                key : 'id'
-            }
+            type : Sequelize.INTEGER,
+            defaultValue : 0,
+            allowNull : false
         }
     }
 );
@@ -116,7 +132,7 @@ function connect()
         sequelize.sync
         ({
             logging : false,
-            // force: true, // deletes all data
+            force: true, // deletes all data
             // alter : true // deleted data where necessary
         })
         .then(() =>
