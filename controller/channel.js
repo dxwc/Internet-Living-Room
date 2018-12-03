@@ -14,8 +14,6 @@ router.get('/channel/:id', (req, res) =>
         global.channels.hasOwnProperty(req.params.id)
     )
     {
-        let the_channel = global.channels[req.params.id];
-
         res.setHeader('Cache-Control', 'no-cache');
         res.setHeader('Content-Type', 'text/event-stream');
         res.setHeader('Connection', 'keep-alive');
@@ -34,7 +32,8 @@ router.get('/channel/:id', (req, res) =>
                         play_at : video_id === 'XOacA3RYrXk' ?
                                     null :
                                     new Date().getTime() - start_time,
-                        users_recieving : the_channel.evt.eventNames().length
+                        users_recieving : global.channels[req.params.id]
+                                          .evt.eventNames().length
                     }
                 )}\n\n`
             );
@@ -43,11 +42,12 @@ router.get('/channel/:id', (req, res) =>
         // not <user id> to allow non-registered user can connect as well
         let evt_on_name = uuid();
 
-        the_channel.evt.on(evt_on_name, event_listener);
+        global.channels[req.params.id].evt.on(evt_on_name, event_listener);
         res.on('close', () =>
         {
             if(global.channels.hasOwnProperty(req.params.id))
-                the_channel.evt.removeListener(evt_on_name, event_listener);
+            global.channels[req.params.id].evt.removeListener
+            (evt_on_name, event_listener);
         });
     }
     else return res.status(404).json
@@ -60,6 +60,9 @@ router.get('/channel/:id', (req, res) =>
 
 router.get('/channel', require('../middleware/logged_in_only.js'), (req, res) =>
 // TODO: consider making this a POST request
+// FIXME: a different user creating channel is overwriting previous channel
+// and continues to send update to newly created channel and closes connection
+// to previous chnannel
 {
     // op.create_channel will delete any previous channel by same before creating
     op.create_channel(req.session.passport.user.id)
