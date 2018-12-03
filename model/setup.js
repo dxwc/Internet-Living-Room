@@ -74,6 +74,40 @@ const channel = sequelize.define
     }
 );
 
+const video = sequelize.define
+(
+    'video',
+    {
+        id :
+        {
+            type : Sequelize.UUID,
+            defaultValue : Sequelize.UUIDV4,
+            primaryKey: true
+        },
+        url_of_video :
+        {
+            type: Sequelize.TEXT
+        },
+        person :  // the person who submit the video
+        {
+            type : Sequelize.UUID,
+            references :
+            {
+                model : user,
+                key : 'id'
+            }
+        },
+        channel :  // the video from which channel
+        {
+            type : Sequelize.UUID,
+            references :
+            {
+                model: channel,key: 'id'
+            }
+        }
+    }
+);
+
 function connect()
 {
     return new Promise((resolve, reject) =>
@@ -103,3 +137,4 @@ module.exports.sequelize = sequelize;
 module.exports.connect = connect;
 module.exports.user = user;
 module.exports.channel = channel;
+module.exports.video = video;
