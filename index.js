@@ -40,15 +40,48 @@ if(!process.env.TESTING) setInterval(() =>
                 )
             )
             {
-                // get next video, update and emit, if none,
-                // send XOacA3RYrXk, 200, 200
-                global.channels[ch_id].evt.emit
-                (
-                    connection,
-                    'XOacA3RYrXk',
-                    200,
-                    200
-                );
+                require('./model/api_operations.js').get_next_video(ch_id)
+                .then((video) =>
+                // TODO: find out whether promise block would cache in global
+                // variables or update them properly
+                {
+                    if(!video.id || typeof(video.length) !== 'number')
+                        throw new Error('Invalid data from db');
+
+                    global.channels[ch_id].current_video = video.id;
+                    global.channels[ch_id].start_time    = new Date().getTime()
+                                                           + 1000;
+                    global.channels[ch_id].video_length  = video.length;
+
+                    global.channels[ch_id].evt.emit
+                    (
+                        connection,
+                        global.channels[ch_id].current_video,
+                        global.channels[ch_id].start_time,
+                        global.channels[ch_id].video_length
+                    );
+                })
+                .catch((err) =>
+                {
+                    if(process.env.DEV && !process.env.TESTING)
+                    {
+                        if(err.code === 'NO_VIDEO')
+                            console.error('NO_VIDEO', ch_id);
+                        else
+                        {
+                            console.error('Video data fetch error:');
+                            console.error(err);
+                        }
+                    }
+
+                    global.channels[ch_id].evt.emit
+                    (
+                        connection,
+                        'XOacA3RYrXk',
+                        200,
+                        200
+                    );
+                })
             }
             else
             {

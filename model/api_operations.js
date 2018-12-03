@@ -74,6 +74,30 @@ function create_channel(user_id)
     .catch((err) => { throw err });
 }
 
+function get_next_video(channel_id)
+{
+    return model.video.findOne
+    ({
+        where : { channel : channel_id },
+        order : [ ['vote', 'DESC'] ]
+    })
+    .then((res) =>
+    {
+        if(!res || !res.dataValues)
+        {
+            let err = new Error('No video for channel on DB');
+            err.code = 'NO_VIDEO';
+            throw err;
+        }
+        else return res.dataValues;
+    })
+    .catch((err) =>
+    {
+        throw err;
+    });
+}
+
 module.exports.sign_up        = sign_up;
 module.exports.get_user_info  = get_user_info;
 module.exports.create_channel = create_channel;
+module.exports.get_next_video = get_next_video;
