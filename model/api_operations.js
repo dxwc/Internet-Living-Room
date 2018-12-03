@@ -64,5 +64,10 @@ function get_user_info(id)
     });
 }
 
+function submit_video(url, user, channel) {
+    // create a new entry in the table named "video"
+    // also create a new entry in the table named "voting"
+}
+
 module.exports.sign_up = sign_up;
 module.exports.get_user_info = get_user_info;
