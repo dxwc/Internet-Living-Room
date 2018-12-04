@@ -203,7 +203,7 @@ class Login extends React.Component {
           <input type="password" name="upass" className="form-control" placeholder="Password" value={this.state.password} onChange={this.passwordChanged}/>
         </div>
         <div className="modal-footer">
-          <button type="submit" className="btn btn-success" onClick={this.signUp}>Submit</button>
+          <button type="button" className="btn btn-success" onClick={this.signUp}>Submit</button>
         </div>
         </form>
       </div>
@@ -227,7 +227,7 @@ class Login extends React.Component {
       
 
       <div className="modal-footer">
-        <button type="submit" className="btn btn-success" onClick={this.login}>Submit</button>
+        <button type="button" className="btn btn-success" onClick={this.login}>Submit</button>
       </div>
       </form>
     </div>
