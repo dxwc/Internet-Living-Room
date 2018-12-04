@@ -85,11 +85,12 @@ function get_next_video(channel_id)
     {
         if(!res || !res.dataValues)
         {
-            let err = new Error('No video for channel on DB');
-            err.code = 'NO_VIDEO';
-            throw err;
+            return [channel_id, null];
         }
-        else return res.dataValues;
+        else
+        {
+            return [channel_id, res.dataValues];
+        }
     })
     .catch((err) =>
     {
