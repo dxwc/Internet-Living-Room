@@ -125,6 +125,47 @@ const video = sequelize.define
     }
 );
 
+const main_ch_video = sequelize.define
+(
+    'main_ch_video',
+    {
+        id : // video id extracted from url
+        {
+            type : Sequelize.TEXT,
+            primaryKey : true,
+            validate :
+            {
+                is  : /^[a-zA-Z0-9_-]+$/, // https://youtu.be/gocwRvLhDf8
+                len : 11
+            }
+        },
+        length : // duration in seconds
+        {
+            type : Sequelize.INTEGER,
+            allowNull : false,
+            validate :
+            {
+                min : 0
+            }
+        },
+        by : // submitted by user
+        {
+            type : Sequelize.UUID,
+            references :
+            {
+                model : user,
+                key : 'id'
+            }
+        },
+        vote : // vote count
+        {
+            type : Sequelize.INTEGER,
+            defaultValue : 0,
+            allowNull : false
+        }
+    }
+);
+
 function connect()
 {
     return new Promise((resolve, reject) =>
@@ -150,8 +191,9 @@ function connect()
 }
 
 
-module.exports.sequelize = sequelize;
-module.exports.connect   = connect;
-module.exports.user      = user;
-module.exports.channel   = channel;
-module.exports.video     = video;
+module.exports.sequelize     = sequelize;
+module.exports.connect       = connect;
+module.exports.user          = user;
+module.exports.channel       = channel;
+module.exports.video         = video;
+module.exports.main_ch_video = main_ch_video;
