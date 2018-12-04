@@ -1,7 +1,7 @@
-let faker   = require('faker');
-let assert  = require('assert');
-let val     = require('validator');
-let db      = require('../../../../model/setup.js');
+let faker  = require('faker');
+let assert = require('assert');
+let val    = require('validator');
+let db     = require('../../../../model/setup.js');
 
 let created_user_name = faker.internet.userName();
 let created_password = faker.internet.password();

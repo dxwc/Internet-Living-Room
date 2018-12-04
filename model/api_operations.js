@@ -66,5 +66,39 @@ function get_user_info(name)
     });
 }
 
-module.exports.sign_up = sign_up;
-module.exports.get_user_info = get_user_info;
+function create_channel(user_id)
+{
+    return model.channel.destroy({ where : { host : user_id }})
+    .then(() => model.channel.create({ host : user_id }))
+    .then((res) => res.dataValues.id)
+    .catch((err) => { throw err });
+}
+
+function get_next_video(channel_id)
+{
+    return model.video.findOne
+    ({
+        where : { channel : channel_id },
+        order : [ ['vote', 'DESC'] ]
+    })
+    .then((res) =>
+    {
+        if(!res || !res.dataValues)
+        {
+            return [channel_id, null];
+        }
+        else
+        {
+            return [channel_id, res.dataValues];
+        }
+    })
+    .catch((err) =>
+    {
+        throw err;
+    });
+}
+
+module.exports.sign_up        = sign_up;
+module.exports.get_user_info  = get_user_info;
+module.exports.create_channel = create_channel;
+module.exports.get_next_video = get_next_video;

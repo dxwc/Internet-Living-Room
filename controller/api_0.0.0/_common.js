@@ -29,29 +29,5 @@ function set_captcha_get_svg(req)
     }
 }
 
-function captcha_control(req, res, next) // middleware for sign up and login
-{
-    if(captcha_is_valid(req)) return next();
-    else
-    {
-        let svg = set_captcha_get_svg(req);
-
-        if(svg === -1) return res.status(500).json
-        ({
-            success : false,
-            reason_code : -5,
-            reason_text : 'Server error, retry or contact admin',
-        });
-        else return res.status(409).json
-        ({
-            success : false,
-            reason_code : -4,
-            reason_text : 'Captcha solution was wrong, retry',
-            captcha : svg
-        });
-    }
-}
-
 module.exports.captcha_is_valid    = captcha_is_valid;
 module.exports.set_captcha_get_svg = set_captcha_get_svg;
-module.exports.captcha_control     = captcha_control;
