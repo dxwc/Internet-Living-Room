@@ -1,3 +1,9 @@
+# Dev
+
++ Start: `npm start` (ensure database server has been started before this, see below)
++ Automatic test: `npm test`
++ Manual test: `npm run dev` and then go to `/test` route (ex: `localhost:9001/test`)
+
 # Node
 
 + Run once: `nvm install 10.9.0`

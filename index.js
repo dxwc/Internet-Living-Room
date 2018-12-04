@@ -1,11 +1,27 @@
-const app = require('express')();
+const express  = require('express');
+const app      = express();
+const passport = require('./middleware/auth.js');
 
-app.use(require('body-parser').urlencoded({ extended: false }));
-app.use(require('body-parser').json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use
+(
+    require('express-session')
+    ({
+        secret            : process.env.SESSION_SECRET || 'CHANGE_ME',
+        resave            : true,
+        saveUninitialized : true
+    })
+);
+app.use(passport.initialize());
+app.use(passport.session());
+// TODO: Consider deleting captcha using a middleware :
+// - if after n minutes or
+// - if user visits non-captcha url
 
-app.use(require('./controller/home.js'));
-app.use(require('./controller/api_0.0.0/user.js'));
-app.use(require('./controller/404.js')); // last router to use
+if(process.env.DEV && !process.env.TESTING) require('./middleware/debug.js')(app);
+
+app.use(require('./controller/'));
 
 let db = require('./model/setup.js');
 let http_server;

@@ -8,7 +8,7 @@ function sign_up
     password
 )
 {
-    return bcrypt.hash(password, process.env.TESTING ? 6 : 12)
+    return bcrypt.hash(password, 8)
     .then((hashed_password) =>
     {
         return model.user.create
@@ -33,11 +33,11 @@ function sign_up
     });
 }
 
-function get_user_info(id)
+function get_user_info(name)
 {
     return model.user.findOne
     ({
-        where : { id : id },
+        where : { uname : val.escape(name) },
         attributes : ['uname', 'fname', 'lname', 'createdAt']
     })
     .then((res) =>
@@ -51,9 +51,11 @@ function get_user_info(id)
         else
         {
             return ({
-                user_name      : res.dataValues.uname,
-                first_name     : res.dataValues.fname,
-                last_name      : res.dataValues.lname,
+                user_name      : val.unescape(res.dataValues.uname),
+                first_name     : res.dataValues.fname ?
+                                    val.unescape(res.dataValues.fname) : null,
+                last_name      : res.dataValues.lname ?
+                                    val.unescape(res.dataValues.lname) : null,
                 registered_on  : res.dataValues.createdAt
             });
         }
