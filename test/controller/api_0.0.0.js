@@ -3,6 +3,8 @@ const assert  = require('assert');
 const request = require('supertest');
 const val     = require('validator');
 const db      = require('../../model/setup.js');
+const user = require('../../model/user.js');
+const channel = require('../../model/channel.js');
 
 let http_server;
 
@@ -209,7 +211,7 @@ describe('TESTING /api/0.0.0/user', () =>
 
     it('should successfully GET /api/0.0.0/user/<ID> with valid user ID', (done) =>
     {
-        db.user.findOne() // assumes there exists at least one
+        user.findOne() // assumes there exists at least one
         .then((res) =>
         {
             request(http_server)
