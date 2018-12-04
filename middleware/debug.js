@@ -80,6 +80,17 @@ module.exports = (app) =>
                 )
             );
         }
+        else if(req.originalUrl === '/test/main_channel_chat')
+        {
+            return res.sendFile
+            (
+                path.join
+                (
+                    __dirname,
+                    '../test/controller/main_channel_chat.html'
+                )
+            );
+        }
         else
         {
             return res.sendFile

@@ -1,0 +1,112 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Main channel connection test (run after `npm run dev`)</title>
+</head>
+<body>
+    <h4>See console.log</h4>
+    <button
+        id='connect'
+        type='button'>Connect to chat</button>
+    <input
+        id='inp'
+        type='text'
+        placeholder='Say something to main channel chat stream'>
+    <button
+        id='btn'
+        type='button'>Send</button>
+    <br>
+    <br>
+    <button
+        id='stop'
+        type='button'>End connection</button>
+
+        <script>
+        let inp = document.getElementById('inp');
+
+        function send_comment()
+        {
+            if(inp.value.trim().length) return Promise.resolve()
+            .then(() =>
+            {
+                console.log('-> Sending comment');
+                return fetch
+                (
+                    '/main_channel/chat',
+                    {
+                        method : 'POST',
+                        headers :
+                        {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body : JSON.stringify
+                        ({
+                            comment : inp.value
+                        })
+                    }
+                );
+            })
+            .then((res) =>
+            {
+                // TOFIX: JSON not being recieved here
+                console.log('SENT');
+            })
+            .catch((err) =>
+            {
+                console.error('Error posting comment:');
+                console.error(err);
+            });
+        }
+
+        inp.addEventListener('keydown', (e) =>
+        {
+            if(e.key === "Enter") send_comment();
+        });
+        document.getElementById('btn').addEventListener('click', (e) =>
+        {
+            e.preventDefault();
+            send_comment();
+        });
+
+        let sse;
+
+        function connect()
+        {
+            console.log('Attempting to establish a sse connection')
+
+            sse = (new EventSource('/main_channel/chat'));
+
+            sse.onmessage = (ev) =>
+            {
+                let data = JSON.parse(ev.data);
+                console.log('\nBy:', data.by);
+                console.log('Comment:', data.comment);
+                console.log('User receiving:', data.users_recieving, '\n');
+            }
+
+            sse.onerror = (e) =>
+            console.log('Error, make sure you are logged in', e);
+        }
+
+        document.getElementById('connect').addEventListener('click', (e) =>
+        {
+            e.preventDefault();
+            connect();
+        });
+
+        document.getElementById('stop').addEventListener('click', (e) =>
+        {
+            e.preventDefault();
+
+            console.log('Stopping sse connection if exists');
+
+            if(sse) sse.close();
+            sse = null;
+        });
+
+    </script>
+</body>
+</html>
