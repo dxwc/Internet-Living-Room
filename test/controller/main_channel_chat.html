@@ -6,25 +6,65 @@
     <title>Main channel connection test (run after `npm run dev`)</title>
 </head>
 <body>
-    <h4>See console.log</h4>
     <button
         id='connect'
-        type='button'>Connect to chat</button>
-    <input
-        id='inp'
-        type='text'
-        placeholder='Say something to main channel chat stream'>
-    <button
-        id='btn'
-        type='button'>Send</button>
-    <br>
-    <br>
+        type='button'>Connect to recieve chats</button>
     <button
         id='stop'
         type='button'>End connection</button>
+    <hr>
+    <input
+        style='width: 95%'
+        id='inp'
+        type='text'
+        placeholder='Say something to main channel chat stream'>
+    <br>
+    <span id='captcha_node'>Loading Captcha...</span>
+    <input
+        id='captcha_solution'
+        name='captcha_text'
+        type='text'
+        placeholder='Enter captcha solution'>
+    <br>
+    <button
+        id='btn'
+        type='button'>Comment</button>
+    <br>
+    <br>
+    <div id='info' style='color: grey'></div>
+    <hr>
 
-        <script>
+    <div
+        id='stream'
+        style='overflow: scroll; width: 100%; height: 50%; border: solid 1% grey;'>
+    </div>
+
+    <hr>
+    <i>See console.log</i>
+
+    <script>
         let inp = document.getElementById('inp');
+        let captcha_node = document.getElementById('captcha_node');
+        let info = document.getElementById('info');
+        let captcha_solution = document.getElementById('captcha_solution');
+        let stream = document.getElementById('stream');
+        let sse;
+
+        fetch('/api/0.0.0/auth')
+        .then((res) => res.json())
+        .then((res) =>
+        {
+            if(res.success) captcha_node.innerHTML = res.captcha;
+            else if(res.reason_text) info.innerHTML = res.reason_text;
+            else info.innerHTML = 'Server error';
+        })
+        .catch((err) =>
+        {
+            console.log(err);
+                info.innerHTML = 'Unexpected error, see console.log';
+        });
+
+        connect();
 
         function send_comment()
         {
@@ -44,15 +84,26 @@
                         },
                         body : JSON.stringify
                         ({
-                            comment : inp.value
+                            comment : inp.value,
+                            captcha_text : captcha_solution.value
                         })
                     }
                 );
             })
             .then((res) =>
             {
-                // TOFIX: JSON not being recieved here
-                console.log('SENT');
+                console.log('status:', res.status);
+                return res.json();
+            })
+            .then((res) =>
+            {
+                captcha_solution.value = '';
+
+                if(res.success)          info.innerHTML = 'Success';
+                else if(res.reason_text) info.innerHTML = res.reason_text;
+                else                     login_info.innerHTML = 'Server error';
+
+                if(res.captcha)          captcha_node.innerHTML = res.captcha;
             })
             .catch((err) =>
             {
@@ -71,20 +122,35 @@
             send_comment();
         });
 
-        let sse;
-
         function connect()
         {
-            console.log('Attempting to establish a sse connection')
+            console.log('Starting a sse connection')
 
             sse = (new EventSource('/main_channel/chat'));
 
             sse.onmessage = (ev) =>
             {
                 let data = JSON.parse(ev.data);
-                console.log('\nBy:', data.by);
-                console.log('Comment:', data.comment);
-                console.log('User receiving:', data.users_recieving, '\n');
+                if
+                (
+                    !data.by      ||
+                    !data.comment ||
+                    typeof(data.users_recieving) !== 'number'
+                )
+                {
+                    console.error('invalid data', data);
+                    return;
+                }
+
+                let span = document.createElement('span');
+                span.innerHTML =
+                    `<i title='${data.users_recieving}'>` +
+                    `${data.by}</i>: ${data.comment}<hr>`;
+                stream.appendChild(span);
+
+                // console.log('\nBy:', data.by);
+                // console.log('Comment:', data.comment);
+                // console.log('User receiving:', data.users_recieving, '\n');
             }
 
             sse.onerror = (e) =>

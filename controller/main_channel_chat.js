@@ -1,6 +1,7 @@
 let router = require('express').Router();
 let Event  = require('events');
 let xss    = require('xss-filters');
+let c      = require('../controller/api_0.0.0/_common.js');
 
 global.chat = new Event();
 
@@ -39,11 +40,11 @@ router.get
     }
 );
 
-// TODO: set captcha control or set timer to limit spam
 router.post
 (
     '/main_channel/chat',
     require('../middleware/logged_in_only.js'),
+    require('../middleware/captcha_control.js'),
     (req, res) =>
     {
         if(typeof(req.body.comment) !== 'string' && req.body.comment.trim().length)
@@ -71,7 +72,18 @@ router.post
                 })
             }, 0);
 
+            let svg = c.set_captcha_get_svg(req);
+
+            if(svg !== -1)
+            {
+                return res.json
+                ({
+                    success : true,
+                    captcha : svg
+                });
+            }
             return res.json({ success : true });
+
         }
         catch(err)
         {
