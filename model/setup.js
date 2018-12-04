@@ -125,6 +125,27 @@ const video = sequelize.define
     }
 );
 
+const vote = sequelize.define(
+    'vote', {
+        username :
+        {
+            type : Sequelize.STRING,
+        },
+        channelId :
+        {
+            type: Sequelize.UUID,
+        },
+        videoId :
+        {
+            type: Sequelize.TEXT,
+        },
+        vote :
+        {
+            type: Sequelize.INTEGER,
+
+        }
+    }
+);
 function connect()
 {
     return new Promise((resolve, reject) =>
@@ -155,3 +176,4 @@ module.exports.connect   = connect;
 module.exports.user      = user;
 module.exports.channel   = channel;
 module.exports.video     = video;
+module.exports.vote = vote;
