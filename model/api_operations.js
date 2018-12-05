@@ -66,8 +66,7 @@ function get_user_info(name)
     });
 }
 
-<<<<<<< HEAD
-function submit_video(url, user, channel) {
+function submit_video(video_id, which_channel, minutes, who_submit) {
     // create a new entry in the table named "video"
     // also create a new entry in the table named "voting"
     // using findOrCreate https://sequelize.readthedocs.io/en/2.0/docs/models-usage/
@@ -95,8 +94,8 @@ function submit_video(url, user, channel) {
             *//*
         }) */
     model.video.findOrCreate({ 
-        where: { url_of_video: url, channel: channel }, // where same video appear in the same channel twice
-        defaults: { person: user } // if the video does not exist yet, we will create it with person = user
+        where: { id: video_id, channel: which_channel }, // where same video appear in the same channel twice
+        defaults: { by: who_submit, length: minutes } // if the video does not exist yet, we will create it with person = user
     }).spread((vid, created) => {
         console.log(vid.get({
             plain: true
@@ -105,10 +104,6 @@ function submit_video(url, user, channel) {
     })
 }
 
-module.exports.sign_up = sign_up;
-module.exports.get_user_info = get_user_info;
-module.exports.submit_video = submit_video;
-=======
 function create_channel(user_id)
 {
     return model.channel.destroy({ where : { host : user_id }})
@@ -145,4 +140,4 @@ module.exports.sign_up        = sign_up;
 module.exports.get_user_info  = get_user_info;
 module.exports.create_channel = create_channel;
 module.exports.get_next_video = get_next_video;
->>>>>>> 7ff6003e9fba7b8456deadce8cbc60e506f92141
+module.exports.submit_video   = submit_video;
