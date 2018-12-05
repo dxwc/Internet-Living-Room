@@ -97,8 +97,40 @@ function get_next_video(channel_id)
         throw err;
     });
 }
+function validate_vote(username, channel_id, video_id, v)
+{
+        return model.vote.findOne(
+        { where: {
+            username: username,
+            channel_id: channel_id,
+            video_id: video_id,
+            vote: v,
 
+        }})
+        .then((vote) => {
+            if(vote === null){
+                return model.vote.create({
+                    username: username,
+                    channel_id: channel_id,
+                    video_id: video_id,
+                    vote: v,
+                });
+            } else {
+                let  err = new Error('Already Voted for this video');
+                err.code = 'Already_Voted';
+                throw err;
+            }
+        })
+        .catch(err => {
+            throw err;
+        });
+        console.log(vote);
+
+        
+
+}
 module.exports.sign_up        = sign_up;
 module.exports.get_user_info  = get_user_info;
 module.exports.create_channel = create_channel;
 module.exports.get_next_video = get_next_video;
+module.exports.validate_vote  = validate_vote;
