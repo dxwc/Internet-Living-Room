@@ -1,4 +1,4 @@
-let assert  = require('assert');
+let assert = require('assert');
 
 let user_test = require('./user.js');
 

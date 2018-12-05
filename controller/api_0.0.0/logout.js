@@ -1,4 +1,4 @@
-let router      = require('express').Router();
+let router = require('express').Router();
 
 router.post('/api/0.0.0/logout', (req, res) =>
 {

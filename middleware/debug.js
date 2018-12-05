@@ -14,6 +14,8 @@ module.exports = (app) =>
             console.log('No previously set captcha solution found');
         if(req.method === 'POST')
             console.log('Request body :', req.body);
+        console.log('Number of channels:', Object.keys(global.channels).length);
+        console.log('Number of hosts:', Object.keys(global.creators).length);
         console.log();
 
         next();
@@ -53,6 +55,17 @@ module.exports = (app) =>
                 (
                     __dirname,
                     '../test/controller/api_0.0.0/manual/api_logout.html'
+                )
+            );
+        }
+        else if(req.originalUrl === '/test/channel_connect')
+        {
+            return res.sendFile
+            (
+                path.join
+                (
+                    __dirname,
+                    '../test/controller/channel_connect.html'
                 )
             );
         }

@@ -1,5 +1,5 @@
-let router      = require('express').Router();
-let c           = require('./_common.js');
+let router = require('express').Router();
+let c      = require('./_common.js');
 
 router.get('/api/0.0.0/auth', (req, res) =>
 {

@@ -1,5 +1,4 @@
 const Sequelize = require('sequelize');
-const bcrypt = require('bcrypt');
 
 const sequelize = new Sequelize
     (
@@ -76,38 +75,55 @@ const channel = sequelize.define
     );
 
 const video = sequelize.define
-    (
+(
     'video',
     {
-        id:
+        id : // video id extracted from url
         {
-            type: Sequelize.UUID,
-            defaultValue: Sequelize.UUIDV4,
-            primaryKey: true
-        },
-        url_of_video:
-        {
-            type: Sequelize.TEXT
-        },
-        person:  // the person who submit the video
-        {
-            type: Sequelize.UUID,
-            references:
+            type : Sequelize.TEXT,
+            primaryKey : true,
+            validate :
             {
-                model: user,
-                key: 'id'
+                is  : /^[a-zA-Z0-9_-]+$/, // https://youtu.be/gocwRvLhDf8
+                len : 11
             }
         },
-        channel:  // the video from which channel
+        channel : // sent for which created channel
         {
-            type: Sequelize.UUID,
-            references:
+            type : Sequelize.UUID,
+            primaryKey : true,
+            references :
             {
-                model: channel, key: 'id'
+                model : channel,
+                key : 'id'
             }
+        },
+        length : // duration in seconds
+        {
+            type : Sequelize.INTEGER,
+            allowNull : false,
+            validate :
+            {
+                min : 0
+            }
+        },
+        by : // submitted by user
+        {
+            type : Sequelize.UUID,
+            references :
+            {
+                model : user,
+                key : 'id'
+            }
+        },
+        vote : // vote count
+        {
+            type : Sequelize.INTEGER,
+            defaultValue : 0,
+            allowNull : false
         }
     }
-    );
+);
 
 const votes = sequelize.define('votes', {
     // each person will vote for only one video in each channel
@@ -168,7 +184,7 @@ function connect() {
 
 
 module.exports.sequelize = sequelize;
-module.exports.connect = connect;
-module.exports.user = user;
-module.exports.channel = channel;
-module.exports.video = video;
+module.exports.connect   = connect;
+module.exports.user      = user;
+module.exports.channel   = channel;
+module.exports.video     = video;
