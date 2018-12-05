@@ -69,6 +69,17 @@ module.exports = (app) =>
                 )
             );
         }
+        else if(req.originalUrl === '/test/main_channel_connect')
+        {
+            return res.sendFile
+            (
+                path.join
+                (
+                    __dirname,
+                    '../test/controller/main_channel_connect.html'
+                )
+            );
+        }
         else
         {
             return res.sendFile
