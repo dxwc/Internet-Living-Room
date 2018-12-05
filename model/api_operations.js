@@ -136,8 +136,32 @@ function get_next_video(channel_id)
     });
 }
 
-module.exports.sign_up        = sign_up;
-module.exports.get_user_info  = get_user_info;
-module.exports.create_channel = create_channel;
-module.exports.get_next_video = get_next_video;
-module.exports.submit_video   = submit_video;
+function get_next_main_ch_video()
+{
+    return model.video.findOne
+    ({
+        order : [ ['vote', 'DESC'] ]
+    })
+    .then((res) =>
+    {
+        if(!res || !res.dataValues)
+        {
+            return null;
+        }
+        else
+        {
+            return res.dataValues;
+        }
+    })
+    .catch((err) =>
+    {
+        throw err;
+    });
+}
+
+module.exports.sign_up                = sign_up;
+module.exports.get_user_info          = get_user_info;
+module.exports.create_channel         = create_channel;
+module.exports.get_next_video         = get_next_video;
+module.exports.get_next_main_ch_video = get_next_main_ch_video;
+module.exports.submit_video           = submit_video;
