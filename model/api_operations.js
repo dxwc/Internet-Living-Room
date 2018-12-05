@@ -75,8 +75,11 @@ function create_channel(user_id)
 }
 
 function get_next_video(channel_id)
+// TODO: fix function after correct model is added
 {
-    return model.video.findOne
+    return Promise.resolve([channel_id, null]);
+    /*
+    return model.?????.findOne
     ({
         where : { channel : channel_id },
         order : [ ['vote', 'DESC'] ]
@@ -96,11 +99,15 @@ function get_next_video(channel_id)
     {
         throw err;
     });
+    */
 }
 
 function get_next_main_ch_video()
+// TODO: fix function after correct model is added
 {
-    return model.video.findOne
+    return Promise.resolve(null);
+    /*
+    return model.????.findOne
     ({
         order : [ ['vote', 'DESC'] ]
     })
@@ -119,6 +126,7 @@ function get_next_main_ch_video()
     {
         throw err;
     });
+    */
 }
 
 module.exports.sign_up                = sign_up;
