@@ -7,7 +7,7 @@ router.use(require('./api_0.0.0/auth.js'));
 router.use(require('./api_0.0.0/login.js'));
 router.use(require('./api_0.0.0/logout.js'));
 router.use(require('./vote.js'));
-//router.use(require('./videoSubmit.js'));
+router.use(require('./videoSubmit.js'));
 router.use(require('./404.js'));
 
 
