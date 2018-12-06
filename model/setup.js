@@ -125,43 +125,6 @@ const video = sequelize.define
     }
 );
 
-const votes = sequelize.define('votes', {
-    // each person will vote for only one video in each channel
-    // same person cannot reappear in the same channel again with different vote
-    // same person in the same channel cannot have the same vote
-    person: {
-        // the person who vote
-        type: Sequelize.TEXT,
-        unique: 'compositeIndex', // this allow person + vote + channel become a unique index
-        allowNull: false,
-        references: {
-            model: user,
-            key: 'uname'
-        }
-    },
-    vote: {
-        // the video that the person chose
-        type: Sequelize.UUID,
-        allowNull: false,
-        unique: 'compositeIndex',
-        references: {
-            model: video,
-            key: 'id'
-        }
-    },
-    channel: {
-        // the channel which the person and video are in
-        type: Sequelize.UUID,
-        allowNull: false,
-        unique: 'compositeIndex',
-        references: {
-            model: channel,
-            key: 'id'
-        }
-    }
-}
-);
-
 const main_ch_video = sequelize.define
 (
     'main_ch_video',
