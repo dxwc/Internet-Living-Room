@@ -38,8 +38,15 @@ router.post('/api/0.0.0/submit_video', (req, res) => {
 
 router.get('/api/0.0.0/getting_video/:channel', (req, res) => {
     // using channel id to get a list of video that were submitted by the user.
-    // check if it is a valid channel id
-    
+    const channel_id = req.params.channel;
+    op.get_video_list(channel_id).then((result) => {
+        return res.status(200).json(result);
+    }).catch((err) => {
+        return res.status(500).json ({
+            success : false,
+            reason  : "the channel might not exist or there is no more video in that channel."
+        });
+    })
 });
 
 module.exports = router;

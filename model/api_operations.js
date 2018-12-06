@@ -103,8 +103,24 @@ function submit_video(video_id, which_channel, minutes, who_submit) {
         console.log(created)
     })
 }
-function existChannel(channel_id) {
+function get_video_list(channel_id) {
     // check if a channel exist or not
+    return model.video.findAll({
+        where: {channel: channel_id}
+    }).then((res) => 
+    {
+        if(!res || !res.dataValues)
+        {
+            return null;
+        }
+        else
+        {
+            return res.dataValues;
+        }
+    }).catch((err) =>
+    {
+        throw err;
+    });
 }
 
 function create_channel(user_id)
@@ -168,3 +184,4 @@ module.exports.create_channel         = create_channel;
 module.exports.get_next_video         = get_next_video;
 module.exports.get_next_main_ch_video = get_next_main_ch_video;
 module.exports.submit_video           = submit_video;
+module.exports.get_video_list         = get_video_list;
