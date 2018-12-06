@@ -66,7 +66,7 @@ function get_user_info(name)
     });
 }
 
-function submit_video(video_id, which_channel, minutes, who_submit) {
+function submit_video(video_id, which_channel, seconds, who_submit) {
     // create a new entry in the table named "video"
     // also create a new entry in the table named "voting"
     // using findOrCreate https://sequelize.readthedocs.io/en/2.0/docs/models-usage/
@@ -93,18 +93,19 @@ function submit_video(video_id, which_channel, minutes, who_submit) {
          In the example above, the "spread" on line 75 divides the array into its 2 parts and passes them as arguments to the callback function defined beginning at line 39, which treats them as "user" and "created" in this case. (So "user" will be the object from index 0 of the returned array and "created" will equal "true".)
             *//*
         }) */
-    model.video.findOrCreate({ 
+    return model.video.findOrCreate({ 
         where: { id: video_id, channel: which_channel }, // where same video appear in the same channel twice
-        defaults: { by: who_submit, length: minutes } // if the video does not exist yet, we will create it with person = user
+        defaults: { by: who_submit, length: seconds } // if the video does not exist yet, we will create it with person = user
     }).spread((vid, created) => {
         console.log(vid.get({
             plain: true
         }))
         console.log(created)
+        return [vid, created];
     })
 }
 function get_video_list(channel_id) {
-    // check if a channel exist or not
+    // return a list of video submitted in the channel
     return model.video.findAll({
         where: {channel: channel_id}
     }).then((res) => 
