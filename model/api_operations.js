@@ -97,29 +97,50 @@ function get_next_video(channel_id)
         throw err;
     });
 }
-function create_user_vote(username, channel_id, video_id){
-    return model.vote.create({
-        username: username,
-        channel_id: channel_id,
-        video_id: video_id,
+function submit_video(video_id, channel_id, length, username){
+    //two same videos can't be created even if they are in different channels
+    return model.video.findOne({
+        where: { id: video_id }
+        
     }).then((vote) =>{
-        return vote.id;
+        if(vote === null){
+            return model.video.create({
+                id: video_id,
+                channel: channel_id,
+                length: length,
+                username: username
+            })
+        } else {
+            let err = new Error("Someone already submited the video");
+            err.code = "Already_Existed";
+            throw err;
+
+        }
     }).catch((err)=>{
+        console.log(err);
         throw err;
     });
 }
-function validate_vote(vote_id, vote)
+function validate_vote(username, channel_id, video_id, vote)
 {
         return model.vote.findOne(
         { where: {
-            id: vote_id,
+            username: username,
+            channel_id: channel_id,
+            video_id: video_id,
+            vote: vote,
 
         }})
         .then((res) => {
-            if(res.vote === 0){
-               res.updateAttributes({
-                    vote : vote,
-               });
+            if(res === null){
+                //model.video.update
+               return model.vote.create({
+                    username: username,
+                    channel_id: channel_id,
+                    video_id: video_id,
+                    vote: vote,
+                });
+
             } else {
                 let  err = new Error('Already Voted for this video');
                 err.code = 'Already_Voted';
@@ -132,10 +153,12 @@ function validate_vote(vote_id, vote)
 
 }
 
-function get_user_vote(vote_id){
+function get_user_vote(username, channel_id, video_id){
     return model.vote.findOne({
         where: {
-            id: vote_id
+            username: username,
+            channel_id: channel_id,
+            video_id: video_id
         }
     }).then((vote) => {
         if(vote === null){
@@ -153,6 +176,6 @@ module.exports.sign_up        = sign_up;
 module.exports.get_user_info  = get_user_info;
 module.exports.create_channel = create_channel;
 module.exports.get_next_video = get_next_video;
+module.exports.submit_video = submit_video;
 module.exports.validate_vote  = validate_vote;
 module.exports.get_user_vote = get_user_vote;
-module.exports.create_user_vote = create_user_vote;
