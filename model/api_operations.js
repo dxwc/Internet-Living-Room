@@ -97,24 +97,29 @@ function get_next_video(channel_id)
         throw err;
     });
 }
-function validate_vote(username, channel_id, video_id, v)
+function create_user_vote(username, channel_id, video_id){
+    return model.vote.create({
+        username: username,
+        channel_id: channel_id,
+        video_id: video_id,
+    }).then((vote) =>{
+        return vote.id;
+    }).catch((err)=>{
+        throw err;
+    });
+}
+function validate_vote(vote_id, vote)
 {
         return model.vote.findOne(
         { where: {
-            username: username,
-            channel_id: channel_id,
-            video_id: video_id,
-            vote: v,
+            id: vote_id,
 
         }})
-        .then((vote) => {
-            if(vote === null){
-                return model.vote.create({
-                    username: username,
-                    channel_id: channel_id,
-                    video_id: video_id,
-                    vote: v,
-                });
+        .then((res) => {
+            if(res.vote === 0){
+               res.updateAttributes({
+                    vote : vote,
+               });
             } else {
                 let  err = new Error('Already Voted for this video');
                 err.code = 'Already_Voted';
@@ -124,13 +129,30 @@ function validate_vote(username, channel_id, video_id, v)
         .catch(err => {
             throw err;
         });
-        console.log(vote);
 
-        
+}
 
+function get_user_vote(vote_id){
+    return model.vote.findOne({
+        where: {
+            id: vote_id
+        }
+    }).then((vote) => {
+        if(vote === null){
+            let err = new Error("Vote doesn't exist");
+            err.code = "Vote_Does_Not_Exist";
+            throw err;
+        } else {
+            return vote.vote;
+        }
+    }).catch((err) => {
+        throw err;
+    })
 }
 module.exports.sign_up        = sign_up;
 module.exports.get_user_info  = get_user_info;
 module.exports.create_channel = create_channel;
 module.exports.get_next_video = get_next_video;
 module.exports.validate_vote  = validate_vote;
+module.exports.get_user_vote = get_user_vote;
+module.exports.create_user_vote = create_user_vote;

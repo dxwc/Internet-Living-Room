@@ -142,6 +142,7 @@ const vote = sequelize.define(
         vote :
         {
             type: Sequelize.INTEGER,
+            defaultValue: 0
 
         }
     }
