@@ -35,3 +35,11 @@ router.post('/api/0.0.0/submit_video', (req, res) => {
         );
     });
 });
+
+router.get('/api/0.0.0/getting_video/:channel', (req, res) => {
+    // using channel id to get a list of video that were submitted by the user.
+    // check if it is a valid channel id
+    
+});
+
+module.exports = router;

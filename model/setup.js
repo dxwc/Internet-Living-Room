@@ -125,7 +125,6 @@ const video = sequelize.define
     }
 );
 
-<<<<<<< HEAD
 const votes = sequelize.define('votes', {
     // each person will vote for only one video in each channel
     // same person cannot reappear in the same channel again with different vote
@@ -163,9 +162,6 @@ const votes = sequelize.define('votes', {
 }
 );
 
-function connect() {
-    return new Promise((resolve, reject) => {
-=======
 const main_ch_video = sequelize.define
 (
     'main_ch_video',
@@ -205,7 +201,6 @@ function connect()
 {
     return new Promise((resolve, reject) =>
     {
->>>>>>> 8dc1dba66e1d5b631bf7b33d95296e7a57b9912d
         sequelize.sync
             ({
                 logging: false,
