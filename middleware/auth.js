@@ -3,6 +3,7 @@ const Lcl      = require('passport-local').Strategy;
 const model    = require('../model/setup.js');
 const bcrypt   = require('bcrypt');
 const val      = require('validator');
+const xss      = require('xss-filters');
 
 passport.use
 (
@@ -28,7 +29,9 @@ passport.use
                     .then((is_maching) =>
                     {
                         res.dataValues.uname = res.dataValues.uname ?
-                                        val.unescape(res.dataValues.uname) :
+                                        xss.inHTMLData
+                                            (val.unescape
+                                                (res.dataValues.uname)) :
                                         res.dataValues.uname;
                         if(!is_maching) return done(null, false);
                         else            return done(null, res.dataValues);

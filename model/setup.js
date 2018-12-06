@@ -197,12 +197,6 @@ const main_ch_video = sequelize.define
                 model : user,
                 key : 'id'
             }
-        },
-        vote : // vote count
-        {
-            type : Sequelize.INTEGER,
-            defaultValue : 0,
-            allowNull : false
         }
     }
 );
