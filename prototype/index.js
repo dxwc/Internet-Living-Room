@@ -162,7 +162,7 @@ setInterval
 );
 
 // starts express HTTP server:
-const server = app.listen('9001', (err) =>
+const server = app.listen('9002', (err) =>
 {
     if(err) console.error('Error starting server:', err);
     else    console.info ('Server listening on', server.address());
