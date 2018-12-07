@@ -123,6 +123,7 @@ function submit_video(video_id, channel_id, length, username){
 }
 function validate_vote(username, channel_id, video_id, vote)
 {
+
         return model.vote.findOne(
         { where: {
             username: username,
@@ -132,6 +133,7 @@ function validate_vote(username, channel_id, video_id, vote)
 
         }})
         .then((res) => {
+            console.log(res);
             if(res === null){
                 //model.video.update
                return model.vote.create({

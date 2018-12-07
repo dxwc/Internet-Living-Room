@@ -3,15 +3,16 @@ let op     = require('../model/api_operations');
 
 router.post
 ('/vote', (req, res) =>{
-
 	if( typeof(req.body.username) === 'string' &&
 		typeof(req.body.channel_id) === 'string' &&
 		typeof(req.body.video_id) === 'string' && 
 		typeof(req.body.vote) === 'number')
 	{
+
 		op.validate_vote(req.body.username, req.body.channel_id, req.body.video_id, req.body.vote)
 		.then((result) =>{
 
+			console.log(result);
 			return res.status(200).json({msg: "vote", success: true});
 		})
 		.catch((err) => {
