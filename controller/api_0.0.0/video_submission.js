@@ -4,7 +4,7 @@ let getVideoInfo    = require('../function/video_info');
 
 router.post(
     '/api/0.0.0/submit_video',
-    require('../../middleware/logged_in_only.js',
+    require('../../middleware/logged_in_only.js'),
     (req, res) => {
         // verify all the data come thru
         // need to have the url, by, and channel
