@@ -1,0 +1,78 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Vote</title>
+</head>
+<body>
+    <p>username:</p>
+    <p>channel_id:</p>
+    <p>video_id:</p>
+    <button id="upvote" >upvote</button>
+    <button id="downvote">downvote</button>
+    <p id="vote_info"></p>
+    <script>
+        document.addEventListener('DOMContentLoaded', () =>
+        {
+            let upvote = document.getElementById('upvote');
+            let downvote = document.getElementById('downvote');
+            let vote_info = document.getElementById('vote_info');
+            upvote.addEventListener('click', (e) => {
+                fetch('/vote',
+                        {
+                            method : 'POST',
+                            headers :
+                            {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            },
+                            body : JSON.stringify
+                            ({
+                                username: "user",
+                                video_id : "video_id",
+                                channel_id : "channel_id",
+                                vote: 1
+                            })
+                }).then((res) => {
+                    if(res.success){
+                        vote_info.innerHTML = "Upvote Success";
+                    } else {
+                        vote_info.innerHTML = "Upvote fail";
+                    }
+                });
+            
+            });
+            downvote.addEventListener('click', (e) => {
+                fetch('/vote',
+                        {
+                            method : 'POST',
+                            headers :
+                            {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            },
+                            body : JSON.stringify
+                            ({
+                                username: "username",
+                                video_id : "video_id",
+                                channel_id : "channel_id",
+                                vote: -1
+                            })
+                }).then((res) => {
+                    console.log(res);
+                    if(res.success){
+                        vote_info.innerHTML = "Downvote Success";
+                    } else {
+                        vote_info.innerHTML = "Downvote fail";
+                    }
+                });
+            
+            });
+
+          
+
+        });
+    </script>
+</body>
+</html>
