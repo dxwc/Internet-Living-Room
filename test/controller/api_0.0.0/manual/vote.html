@@ -29,12 +29,14 @@
                             },
                             body : JSON.stringify
                             ({
-                                username: "user",
+                                username: "vote3",
                                 video_id : "video_id",
                                 channel_id : "channel_id",
                                 vote: 1
                             })
-                }).then((res) => {
+                })
+                .then((res) => res.json())
+                .then((res) => {
                     if(res.success){
                         vote_info.innerHTML = "Upvote Success";
                     } else {
@@ -54,12 +56,14 @@
                             },
                             body : JSON.stringify
                             ({
-                                username: "username",
+                                username: "vote2",
                                 video_id : "video_id",
                                 channel_id : "channel_id",
                                 vote: -1
                             })
-                }).then((res) => {
+                })
+                .then((res) => res.json())
+                .then((res) => {
                     console.log(res);
                     if(res.success){
                         vote_info.innerHTML = "Downvote Success";
