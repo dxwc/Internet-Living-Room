@@ -38,14 +38,21 @@ router.post(
         });
     });
 
-router.get('/api/0.0.0/getting/video/:channel', (req, res) => {
+router.get('/api/0.0.0/getting_video/:channel', (req, res) => {
     // using channel id to get a list of video that were submitted by the user.
-    const channel_id = req.params.channel;
-    if(typeof(channel_id) !== 'UUID')
-    op.get_video_list(channel_id).then((result) => {
+    // req.params.channel;
+    /*if(typeof(req.params.channel) !== 'UUID') {
+        return res.status(500).json(
+            {
+                success: false,
+                reason: "not a valid channel id"
+            }
+        )
+    }*/
+    op.get_video_list(req.params.channel).then((result) => {
         return res.status(200).json(result);
     }).catch((err) => {
-        return res.status(500).json ({
+        return res.status(500).json({
             success : false,
             reason  : "the channel might not exist or there is no more video in that channel."
         });

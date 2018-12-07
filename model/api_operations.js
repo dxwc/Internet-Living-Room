@@ -107,17 +107,11 @@ function submit_video(video_id, which_channel, seconds, who_submit) {
 function get_video_list(channel_id) {
     // return a list of video submitted in the channel
     return model.video.findAll({
-        where: {channel: channel_id}
+        where: {channel: channel_id},
+        raw: true
     }).then((res) => 
     {
-        if(!res || !res.dataValues)
-        {
-            return null;
-        }
-        else
-        {
-            return res.dataValues;
-        }
+        return res;
     }).catch((err) =>
     {
         throw err;
