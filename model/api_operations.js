@@ -66,52 +66,73 @@ function get_user_info(name)
     });
 }
 
-function submit_video(video_id, which_channel, seconds, who_submit) {
+function submit_video(video_id, which_channel, seconds, who_submit)
+{
     // create a new entry in the table named "video"
     // using findOrCreate https://sequelize.readthedocs.io/en/2.0/docs/models-usage/
-    return model.video.findOrCreate({ 
-        where: { id: video_id, channel: which_channel }, // where same video appear in the same channel twice
-        defaults: { by: who_submit, length: seconds } // if the video does not exist yet, we will create it with person = user
-    }).spread((vid, created) => {
-        return [vid, created];
-    }).catch((err) => {
+    return model.video.findOrCreate
+    ({
+        // where same video appear in the same channel twice
+        where: { id : video_id, channel : which_channel },
+        // if the video does not exist yet, we will create it with person = user
+        defaults: { by : who_submit, length : seconds }
+    })
+    .spread((vid, created) => [vid, created])
+    .catch((err) =>
+    {
         throw err;
     });
 }
 
-function get_video_list(channel_id) {
+function get_video_list(channel_id)
+{
     // return a list of video submitted in the channel
-    return model.video.findAll({
-        where: {channel: channel_id},
-        raw: true
-    }).then((res) => {
-        return res;
-    }).catch((err) => {
+    return model.video.findAll
+    ({
+        where : { channel : channel_id },
+        raw : true
+    })
+    .catch((err) =>
+    {
         throw err;
     });
 }
-// this need to be tested
+
 function create_channel(user_id)
 {
     // find if the user is a host
-    return model.channel.findOne({ where: {host: user_id}})
-    .then((result) => {
-        if(!result) {
+    return model.channel.findOne({ where : { host : user_id } })
+    .then((result) =>
+    {
+        if(!result)
+        {
             // create a channel if he is not a host
             return model.channel.create({ host : user_id })
             .then((res) => res.dataValues.id)
-            .catch((err) => { throw err });
-        }else {
+            .catch((err) =>
+            {
+                throw err
+            });
+        }
+        else
+        {
             // if he is host
-            // destroy all the video in the channel, delete channel, create a new channel
-            return model.video.destroy({ where: { channel: result.id}})
-            .then(() => model.channel.destroy({ where: { host: result.host}}))
-            .then(() => model.channel.create({ host: result.host}))
+            // destroy all the video in the channel, delete channel,
+            // create a new channel
+            return model.video.destroy({ where : { channel : result.id } })
+            .then(() => model.channel.destroy({ where : { host : result.host } }))
+            .then(() => model.channel.create({ host : result.host }))
             .then((res) => res.dataValues.id)
-            .catch((err) => { throw err });
+            .catch((err) =>
+            {
+                throw err;
+            });
         }
     })
-    .catch((err) => { throw err });
+    .catch((err) =>
+    {
+        throw err;
+    });
 }
 
 function get_next_video(channel_id)

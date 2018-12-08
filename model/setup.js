@@ -107,7 +107,7 @@ const video = sequelize.define
                 min : 0
             }
         },
-        by : // submitted by user
+        by : // first submitted by user
         {
             type : Sequelize.UUID,
             references :
