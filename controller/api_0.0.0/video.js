@@ -7,6 +7,7 @@ router.post
 (
     '/api/0.0.0/submit_video',
     require('../../middleware/logged_in_only.js'),
+    require('../../middleware/captcha_control.js'),
     (req, res) =>
     {
         let url           = req.body.url;
