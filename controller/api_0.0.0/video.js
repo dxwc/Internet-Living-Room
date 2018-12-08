@@ -10,53 +10,56 @@ router.post(
         // need to have the url, by, and channel
 
         let url = req.body.url;
-        let who_submit = req.body.who_submit;
+        let who_submit = req.session.passport.user.id;
         let which_channel = req.body.which_channel;
 
-        getVideoInfo(url).then(function (result) {
+        getVideoInfo(url).then((result) => {
             // if we are able to get the video's info
-            const ret_value = op.submit_video(result.id, which_channel, result.length, who_submit);
-            if (ret_value[1]) { // if created
-                return res.status(201).json(
-                    {
+            op.submit_video(result.id, which_channel, result.length, who_submit)
+            .then((ret_value) => {
+                if (ret_value[1]) { // if created
+                    return res.status(201).json({
                         created: true
                     });
-            } else {
-                return res.status(304).json(
-                    {
+                } else {
+                    return res.status(304).json({
                         created: false
-                    }
-                );
-            }
-        }, function (err) { // if getting the video's info failed
-            console.log(err);
-            return res.status(304).json(
-                {
-                    created: false
+                    });
                 }
-            );
+            }).catch((err) => {
+                console.log(err);
+                return res.status(304).json({
+                    created: false
+                });
+            });
+        }).catch((err) => { // if getting the video's info failed
+            console.log(err);
+            return res.status(304).json({
+                    created: false
+                });
         });
     });
 
-router.get('/api/0.0.0/getting_video/:channel', (req, res) => {
-    // using channel id to get a list of video that were submitted by the user.
-    // req.params.channel;
-    /*if(typeof(req.params.channel) !== 'UUID') {
-        return res.status(500).json(
-            {
+router.get(
+    '/api/0.0.0/getting_video/:channel',
+    (req, res) => {
+        // using channel id to get a list of video that were submitted by the user.
+        /*if(typeof(req.params.channel) !== 'UUID') {
+            return res.status(500).json(
+                {
+                    success: false,
+                    reason: "not a valid channel id"
+                }
+            )
+        }*/
+        op.get_video_list(req.params.channel).then((result) => {
+            return res.status(200).json(result);
+        }).catch((err) => {
+            return res.status(500).json({
                 success: false,
-                reason: "not a valid channel id"
-            }
-        )
-    }*/
-    op.get_video_list(req.params.channel).then((result) => {
-        return res.status(200).json(result);
-    }).catch((err) => {
-        return res.status(500).json({
-            success : false,
-            reason  : "the channel might not exist or there is no more video in that channel."
-        });
-    })
-});
+                reason: "the channel might not exist or there is no more video in that channel."
+            });
+        })
+    });
 
 module.exports = router;
