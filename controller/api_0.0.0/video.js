@@ -4,13 +4,13 @@ let getVideoInfo    = require('../function/video_info');
 
 router.post(
     '/api/0.0.0/submit_video',
-    require('../../middleware/logged_in_only.js'),
+    // require('../../middleware/logged_in_only.js'),
     (req, res) => {
         // verify all the data come thru
         // need to have the url, by, and channel
 
         let url = req.body.url;
-        let who_submit = req.session.passport.user.id;
+        let who_submit = req.body.by; // req.session.passport.user.id;
         let which_channel = req.body.which_channel;
 
         getVideoInfo(url).then((result) => {
@@ -22,19 +22,19 @@ router.post(
                         ret_value
                     );
                 } else {
-                    return res.status(304).json({
+                    return res.status(409).json(
                         ret_value
-                    });
+                    );
                 }
             }).catch((err) => {
                 console.log(err);
-                return res.status(304).json({
+                return res.status(500).json({
                     created: false
                 });
             });
         }).catch((err) => { // if getting the video's info failed
             console.log(err);
-            return res.status(304).json({
+            return res.status(500).json({
                     created: false
                 });
         });
