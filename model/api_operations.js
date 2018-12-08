@@ -68,19 +68,31 @@ function get_user_info(name)
 
 function submit_video(video_id, which_channel, seconds, who_submit)
 {
-    // create a new entry in the table named "video"
-    // using findOrCreate https://sequelize.readthedocs.io/en/2.0/docs/models-usage/
     return model.video.findOrCreate
     ({
         // where same video appear in the same channel twice
         where: { id : video_id, channel : which_channel },
-        // if the video does not exist yet, we will create it with person = user
-        defaults: { by : who_submit, length : seconds }
+        // if the video does not exist yet, we will create it
+        defaults: { by : who_submit, length : seconds },
+        attributes : [ 'id' ]
     })
-    .spread((vid, created) => [vid, created])
+    .spread((vid, created) =>
+    {
+        if(created) return { created : true, id : vid.id }
+        else        return { creted : false, id : vid.id } // TODO: add +1 vote
+    })
     .catch((err) =>
     {
-        throw err;
+        if(err.original && err.original.code === '23503')
+        {
+            let err = new Error('Channel does not exists');
+            err.code = 'NO_CHANNEL';
+            throw err;
+        }
+        else
+        {
+            throw err;
+        }
     });
 }
 

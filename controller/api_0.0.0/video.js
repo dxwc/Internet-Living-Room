@@ -1,6 +1,7 @@
 let router       = require('express').Router();
 let op           = require('../../model/api_operations.js');
 let getVideoInfo = require('../function/video_info.js');
+let val          = require('validator');
 
 router.post
 (
@@ -8,12 +9,25 @@ router.post
     require('../../middleware/logged_in_only.js'),
     (req, res) =>
     {
-        // verify all the data come thru
-        // need to have the url, by, and channel
-
         let url           = req.body.url;
         let who_submit    = req.session.passport.user.id;
         let which_channel = req.body.which_channel;
+
+        if
+        (
+            typeof(url) !== 'string'           ||
+            url.length === 0                   ||
+            typeof(which_channel) !== 'string' ||
+            !val.isUUID(which_channel, 4)
+        )
+        {
+            return res.status(400).json
+            ({
+                success     : false,
+                reason_code : 887,
+                reason_text : 'Invalid request'
+            });
+        }
 
         getVideoInfo(url)
         .then((result) =>
@@ -29,15 +43,39 @@ router.post
         })
         .then((ret_value) =>
         {
-            if(ret_value[1]) return res.status(201).json(ret_value); // if created
-            else             return res.status(409).json(ret_value);
+            ret_value.success = true;
+            return res.status(200).json(ret_value);
         })
         .catch((err) =>
         {
-            return res.status(500).json
-            ({
-                created : false
-            });
+            if(err.code === 'INVALID_URL' || err.code === 'PARSE_ERROR')
+            {
+                return res.status(400).json
+                ({
+                    success     : false,
+                    reson_code  : 888,
+                    reason_text : 'Invalid video URL'
+                });
+            }
+            else if(err.code === 'NO_CHANNEL')
+            {
+                return res.status(503).json
+                ({
+                    success     : false,
+                    reason_code : 889,
+                    reason_text : `Channel the video was submitted for doesn't exist`
+                });
+            }
+            else
+            {
+                console.error(err);
+                return res.status(500).json
+                ({
+                    success     : false,
+                    reason_code : 890,
+                    reason_text : 'Unexpected error, retry or contact admin'
+                });
+            }
         });
     }
 );
