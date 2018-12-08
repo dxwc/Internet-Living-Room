@@ -78,27 +78,28 @@ function submit_video(video_id, which_channel, seconds, who_submit) {
         }))
         console.log(created)
         return [vid, created];
-    })
+    }).catch((err) => {
+        throw err;
+    });
 }
+
 function get_video_list(channel_id) {
     // return a list of video submitted in the channel
     return model.video.findAll({
         where: {channel: channel_id},
         raw: true
-    }).then((res) => 
-    {
+    }).then((res) => {
         return res;
-    }).catch((err) =>
-    {
+    }).catch((err) => {
         throw err;
     });
 }
-
+// this need to be tested
 function create_channel(user_id)
 {
     // find if the user is a host
-    model.channel.findOne({ where: {host: user_id}})
-    .then(result => {
+    return model.channel.findOne({ where: {host: user_id}})
+    .then((result) => {
         if(!result) {
             // create a channel if he is not a host
             return model.channel.create({ host : user_id })
@@ -107,9 +108,9 @@ function create_channel(user_id)
         }else {
             // if he is host
             // destroy all the video in the channel, delete channel, create a new channel
-            return model.video.destroy({ where: {channel: result.id}})
-            .then(() => {model.channel.destroy({ where: {host: user_id}})})
-            .then(() => {model.channel.create({ host : user_id })})
+            return model.video.destroy({ where: { channel: result.id}})
+            .then(() => {model.channel.destroy({ where: { host: result.host}})})
+            .then(() => {model.channel.create({ host: result.host})})
             .then((res) => res.dataValues.id)
             .catch((err) => { throw err });
         }

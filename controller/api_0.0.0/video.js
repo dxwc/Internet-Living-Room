@@ -18,12 +18,12 @@ router.post(
             op.submit_video(result.id, which_channel, result.length, who_submit)
             .then((ret_value) => {
                 if (ret_value[1]) { // if created
-                    return res.status(201).json({
-                        created: true
-                    });
+                    return res.status(201).json(
+                        ret_value
+                    );
                 } else {
                     return res.status(304).json({
-                        created: false
+                        ret_value
                     });
                 }
             }).catch((err) => {
@@ -44,14 +44,6 @@ router.get(
     '/api/0.0.0/getting_video/:channel',
     (req, res) => {
         // using channel id to get a list of video that were submitted by the user.
-        /*if(typeof(req.params.channel) !== 'UUID') {
-            return res.status(500).json(
-                {
-                    success: false,
-                    reason: "not a valid channel id"
-                }
-            )
-        }*/
         op.get_video_list(req.params.channel).then((result) => {
             return res.status(200).json(result);
         }).catch((err) => {
