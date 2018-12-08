@@ -109,8 +109,8 @@ function create_channel(user_id)
             // if he is host
             // destroy all the video in the channel, delete channel, create a new channel
             return model.video.destroy({ where: { channel: result.id}})
-            .then(() => {model.channel.destroy({ where: { host: result.host}})})
-            .then(() => {model.channel.create({ host: result.host})})
+            .then(() => model.channel.destroy({ where: { host: result.host}}))
+            .then(() => model.channel.create({ host: result.host}))
             .then((res) => res.dataValues.id)
             .catch((err) => { throw err });
         }
