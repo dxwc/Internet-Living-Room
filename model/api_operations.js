@@ -102,6 +102,7 @@ function get_video_list(channel_id)
     return model.video.findAll
     ({
         where : { channel : channel_id },
+        attributes : [ 'id' ],
         raw : true
     })
     .catch((err) =>

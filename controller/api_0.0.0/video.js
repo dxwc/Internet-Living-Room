@@ -85,19 +85,38 @@ router.get
     '/api/0.0.0/getting_video/:channel',
     (req, res) =>
     {
-        // using channel id to get a list of video that were submitted by the user.
+        if
+        (
+            typeof(req.params.channel) !== 'string' ||
+            req.params.channel.length === 0         ||
+            !val.isUUID(req.params.channel, 4)
+        )
+        {
+            return res.status(400).json
+            ({
+                success     : false,
+                reason_code : 787,
+                reason_text : 'Invalid request'
+            });
+        }
+
         op.get_video_list(req.params.channel)
         .then((result) =>
         {
-            return res.status(200).json(result);
+            return res.status(200).json
+            ({
+                success : true,
+                arr : result
+            });
         })
         .catch((err) =>
         {
+            console.log(err);
             return res.status(500).json
             ({
                 success : false,
-                reason  : "the channel might not exist or there is no more" +
-                          "video in that channel."
+                reason_code : 790,
+                reason_text : 'Unexpected error, retry or contact admin'
             });
         });
     }
