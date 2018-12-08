@@ -1,0 +1,21 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Getting Video Test</title>
+</head>
+<body>
+    Channel ID : <input placeholder='channel id' type='text' id='inp'><br>
+    <button id='btn' type='button'>Get</button>
+
+    <script>
+        document.getElementById('btn').addEventListener('click', (e) =>
+        {
+            e.preventDefault();
+            window.location.href =
+                `/api/0.0.0/getting_video/${document.getElementById('inp').value}`;
+        });
+    </script>
+</body>
+</html>

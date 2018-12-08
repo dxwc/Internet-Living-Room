@@ -102,6 +102,17 @@ module.exports = (app) =>
                 )
             );
         }
+        else if(req.originalUrl === '/test/api_getting_video')
+        {
+            return res.sendFile
+            (
+                path.join
+                (
+                    __dirname,
+                    '../test/controller/api_0.0.0/manual/api_getting_video.html'
+                )
+            );
+        }
         else
         {
             return res.sendFile
