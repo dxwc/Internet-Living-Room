@@ -1,7 +1,7 @@
 let router = require('express').Router();
 let uuid   = require('uuid/v4');
 
-router.get('/main_channel/connect', (req, res) =>
+router.get('/api/0.0.0/main_channel/connect', (req, res) =>
 // TODO: allow one connection per user to a channel, or very few user can attempt
 // a DOS attack
 {

@@ -24,7 +24,7 @@
 
             console.log('Attempting to establish a sse connection')
 
-            sse = (new EventSource('/main_channel/connect'));
+            sse = (new EventSource('/api/0.0.0/main_channel/connect'));
 
             sse.onmessage = (ev) =>
             {

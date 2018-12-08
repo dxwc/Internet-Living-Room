@@ -1,14 +1,14 @@
 let router = require('express').Router();
 let Event  = require('events');
 let xss    = require('xss-filters');
-let c      = require('../controller/api_0.0.0/_common.js');
+let c      = require('./_common.js');
 
 global.chat = new Event();
 
 router.get
 (
-    '/main_channel/chat',
-    require('../middleware/logged_in_only.js'),
+    '/api/0.0.0/main_channel/chat',
+    require('../../middleware/logged_in_only.js'),
     (req, res) =>
     {
         res.setHeader('Cache-Control', 'no-cache');
@@ -42,9 +42,9 @@ router.get
 
 router.post
 (
-    '/main_channel/chat',
-    require('../middleware/logged_in_only.js'),
-    require('../middleware/captcha_control.js'),
+    '/api/0.0.0/main_channel/chat',
+    require('../../middleware/logged_in_only.js'),
+    require('../../middleware/captcha_control.js'),
     (req, res) =>
     {
         if(typeof(req.body.comment) !== 'string' && req.body.comment.trim().length)

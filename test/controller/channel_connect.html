@@ -32,7 +32,7 @@
 
             console.log('Attempting to establish a sse connection')
 
-            sse = (new EventSource('/channel/' + ch_id.value));
+            sse = (new EventSource('/api/0.0.0/channel/' + ch_id.value));
 
             sse.onmessage = (ev) =>
             {
