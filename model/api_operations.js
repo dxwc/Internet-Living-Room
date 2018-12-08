@@ -73,10 +73,6 @@ function submit_video(video_id, which_channel, seconds, who_submit) {
         where: { id: video_id, channel: which_channel }, // where same video appear in the same channel twice
         defaults: { by: who_submit, length: seconds } // if the video does not exist yet, we will create it with person = user
     }).spread((vid, created) => {
-        console.log(vid.get({
-            plain: true
-        }))
-        console.log(created)
         return [vid, created];
     }).catch((err) => {
         throw err;
