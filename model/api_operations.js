@@ -96,9 +96,24 @@ function get_video_list(channel_id) {
 
 function create_channel(user_id)
 {
-    return model.channel.destroy({ where : { host : user_id }})
-    .then(() => model.channel.create({ host : user_id }))
-    .then((res) => res.dataValues.id)
+    // find if the user is a host
+    model.channel.findOne({ where: {host: user_id}})
+    .then(result => {
+        if(!result) {
+            // create a channel if he is not a host
+            return model.channel.create({ host : user_id })
+            .then((res) => res.dataValues.id)
+            .catch((err) => { throw err });
+        }else {
+            // if he is host
+            // destroy all the video in the channel, delete channel, create a new channel
+            return model.video.destroy({ where: {channel: result.id}})
+            .then(() => {model.channel.destroy({ where: {host: user_id}})})
+            .then(() => {model.channel.create({ host : user_id })})
+            .then((res) => res.dataValues.id)
+            .catch((err) => { throw err });
+        }
+    })
     .catch((err) => { throw err });
 }
 
