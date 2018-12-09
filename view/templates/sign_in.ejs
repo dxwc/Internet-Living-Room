@@ -28,7 +28,7 @@
                 required>
         </div>
         <div class='form-group' id='captcha_svg'>
-            Captcha Loading...
+            Captcha loading...
         </div>
         <div class='form-group'>
             <label for='captcha_text'>Solve captcha</label>
@@ -76,7 +76,7 @@
                     .then(() =>
                     {
                         disable_input();
-                        return sign_up();
+                        return sign_in();
                     })
                     .then(() =>
                     {
@@ -147,7 +147,7 @@
                 });
             }
 
-            function sign_up()
+            function sign_in()
             {
                 return fetch
                 (
