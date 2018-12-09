@@ -1,0 +1,197 @@
+<?- include('./parts/top', { title : 'Sign Up' }) ?>
+<body>
+    <?- include('./parts/navigation.ejs', { name : locals.name }) ?>
+    <div class='mx-auto' style='width : 70%'>
+    <h2 class='text-center'>Sign Up</h2>
+    <? if(locals.name !== false) { ?>
+        You are already signed up and logged in as user '<?= name ?>'. No need
+        to sign up again.
+    <? } else { ?>
+        <form>
+        <div class='form-group'>
+            <label for='username'>Enter username</label>
+            <input
+                class='form-control'
+                id='username'
+                name='username'
+                type='text'
+                placeholder='username'
+                required>
+        </div>
+        <div class='form-group'>
+            <label for='password'>Choose a password</label>
+            <input
+                class='form-control'
+                id='password'
+                name='password'
+                type='password'
+                placeholder='password'
+                required>
+        </div>
+        <div class='form-group' id='captcha_svg'>
+            Captcha Loading...
+        </div>
+        <div class='form-group'>
+            <label for='captcha_text'>Solve captcha</label>
+            <input
+                class='form-control'
+                id='captcha_text'
+                name='captcha_text'
+                type='text'
+                placeholder='captcha solution'
+                required>
+            </div>
+        <button
+            class='form-group btn btn-primary'
+            id='btn'
+            type='submit'>Submit</button>
+        <div class='form-group font-italic' id='info'></div>
+        </form>
+    <? } ?>
+    </div>
+    <? if(locals.name === false) { ?>
+    <script>
+        document.addEventListener('DOMContentLoaded', (e) =>
+        {
+            let username     = document.getElementById('username');
+            let password     = document.getElementById('password');
+            let captcha_svg  = document.getElementById('captcha_svg');
+            let captcha_text = document.getElementById('captcha_text');
+            let btn          = document.getElementById('btn');
+            let info         = document.getElementById('info');
+
+            set_captcha();
+
+            btn.addEventListener('click', (e) =>
+            {
+                e.preventDefault();
+
+                if
+                (
+                    username.value.length     &&
+                    password.value.length     &&
+                    captcha_text.value.length
+                )
+                {
+                    Promise.resolve()
+                    .then(() =>
+                    {
+                        disable_input();
+                        return sign_up();
+                    })
+                    .then(() =>
+                    {
+                        enable_input();
+                        set_captcha();
+                    })
+                    .catch(() =>
+                    {
+                        enable_input();
+                        set_captcha();
+                    })
+                }
+                else
+                {
+                    info.innerHTML = 'You must fill out all fields before submitting';
+                }
+            });
+
+            username.addEventListener('keyup', clean_info);
+            password.addEventListener('keyup', clean_info);
+            captcha_text.addEventListener('keyup', clean_info);
+
+            function clean_info()
+            {
+                if(info.innerHTML !== '') info.innerHTML = ''
+            }
+
+            function disable_input()
+            {
+                info.innerHTML = 'Sending...';
+                username.disabled = true;
+                password.disabled = true;
+                captcha_text.disabled = true;
+                btn.disabled = true;
+            }
+
+            function enable_input()
+            {
+                username.removeAttribute('disabled');
+                password.removeAttribute('disabled');
+                captcha_text.removeAttribute('disabled');
+                btn.removeAttribute('disabled');
+            }
+
+            function set_captcha()
+            {
+                captcha_text.innerHTML = '';
+                fetch('/api/0.0.0/auth')
+                .then((res) => res.json())
+                .then((res) =>
+                {
+                    if(res.success)
+                    {
+                        captcha_svg.innerHTML = res.captcha;
+                    }
+                    else if(res.reason_text)
+                    {
+                        info.innerHTML = res.reason_text;
+                    }
+                    else
+                    {
+                        info.innerHTML = 'Unexpected error, retry or contact admin';
+                    }
+                })
+                .catch((err) =>
+                {
+                    info.innerHTML = 'Unexpected error, retry or contact admin';
+                });
+            }
+
+            function sign_up()
+            {
+                return fetch
+                (
+                    '/api/0.0.0/user',
+                    {
+                        method : 'POST',
+                        headers :
+                        {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body : JSON.stringify
+                        ({
+                            user_name : username.value,
+                            password : password.value,
+                            captcha_text : captcha_text.value
+                        })
+                    }
+                )
+                .then((res) => res.json())
+                .then((res) =>
+                {
+                    if(res.success)
+                    {
+                        info.innerHTML = 'Welcome, redirecting to sign in...'
+                        setTimeout(() => window.location.href = '/sign_in', 2000);
+                    }
+                    else if(res.reason_text)
+                    {
+                        info.innerHTML = res.reason_text;
+                    }
+                    else
+                    {
+                        info.innerHTML = 'Unexpected error, retry or contact admin'
+                    }
+                })
+                .catch((err) =>
+                {
+                    info.innerHTML = 'Unexpected error, retry or contact admin';
+                });
+            }
+        });
+    </script>
+    <? } ?>
+</body>
+</html>

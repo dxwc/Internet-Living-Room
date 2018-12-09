@@ -4,15 +4,6 @@
  */
 function if_logged_in_get_user_name(req)
 {
-    /*
-    console.log(req.user);
-    console.log(req.session);
-    console.log(req.session.passport);
-    console.log(req.session.passport.user);
-    console.log(typeof(req.session.passport.user.uname) === 'string');
-    console.log(req.session.passport.user.uname.length);
-    */
-
     if
     (
         req.user &&
