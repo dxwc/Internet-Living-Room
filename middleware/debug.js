@@ -80,6 +80,17 @@ module.exports = (app) =>
             );
 
         }
+        else if(req.originalUrl === '/test/submit_video'){
+             return res.sendFile
+            (
+                path.join
+                (
+                    __dirname,
+                    '../test/controller/api_0.0.0/manual/submit_video.html'
+                )
+            );
+
+        }
         else
         {
             return res.sendFile
