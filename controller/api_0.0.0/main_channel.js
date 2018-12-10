@@ -9,9 +9,17 @@ router.get('/api/0.0.0/main_channel/connect', (req, res) =>
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Connection', 'keep-alive');
 
-    function event_listener(video_id, start_time, video_length)
+    function event_listener()
     {
-        if(!video_id || !start_time || !video_length) return;
+        if
+        (
+            !global.main_ch.current_video                  ||
+            typeof(global.main_ch.start_time) !== 'number' ||
+            !global.main_ch.video_length
+        )
+        {
+            return;
+        }
 
         res.write
         (
@@ -19,10 +27,10 @@ router.get('/api/0.0.0/main_channel/connect', (req, res) =>
             JSON.stringify
             (
                 {
-                    video_id : video_id,
-                    play_at  : video_id === 'XOacA3RYrXk' ?
-                                null :
-                                new Date().getTime() - start_time,
+                    video_id : global.main_ch.current_video,
+                    play_at  : global.main_ch.current_video === 'XOacA3RYrXk' ?
+                            null :
+                            (new Date().getTime() - global.main_ch.start_time)/1000,
                     users_recieving : global.main_ch.evt.eventNames().length
                 }
             )}\n\n`

@@ -1,6 +1,9 @@
-const model  = require('./setup.js');
-const val    = require('validator');
-const bcrypt = require('bcrypt');
+const model   = require('./setup.js');
+const val     = require('validator');
+const bcrypt  = require('bcrypt');
+let sequelize = require('./setup.js').sequelize;
+
+// TODO: change all find functions use with raw : true
 
 function sign_up
 (
@@ -174,7 +177,7 @@ function get_next_video(channel_id)
     return model.video.findOne
     ({
         where : { channel : channel_id },
-        order : [ ['vote', 'DESC'] ]
+        order : sequelize.random()
     })
     .then((res) =>
     {
@@ -195,9 +198,9 @@ function get_next_video(channel_id)
 
 function get_next_main_ch_video()
 {
-    return model.video.findOne
+    return model.main_ch_video.findOne
     ({
-        order : [ ['vote', 'DESC'] ]
+        order : sequelize.random()
     })
     .then((res) =>
     {

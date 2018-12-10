@@ -18,8 +18,12 @@ if(!process.env.TESTING) setInterval(() =>
             !global.main_ch.start_time    ||
             !global.main_ch.video_length  ||
             (
-                (global.main_ch.video_length || 0) <
-                (new Date().getTime() - (global.main_ch.start_time || 0))
+                global.main_ch.video_length > 0 &&
+                global.main_ch.start_time       &&
+                (
+                    (new Date().getTime() - global.main_ch.start_time)/1000 >
+                    global.main_ch.video_length
+                )
             )
         )
         {
@@ -30,17 +34,12 @@ if(!process.env.TESTING) setInterval(() =>
                 (
                     !res                            ||
                     !res.id                         ||
-                    !res.channels                   ||
                     typeof(res.length) !== 'number'
                 )
                 {
-                    global.main_ch.evt.emit
-                    (
-                        connection,
-                        'XOacA3RYrXk',
-                        200,
-                        200
-                    );
+                    global.main_ch.current_video = null;
+                    global.main_ch.video_length  = null;
+                    global.main_ch.start_time    = null;
                 }
                 else
                 {
@@ -48,14 +47,11 @@ if(!process.env.TESTING) setInterval(() =>
                     global.main_ch.video_length  = res.length;
                     global.main_ch.start_time    = new Date().getTime() + 1000;
 
-                    global.main_ch.evt.emit
-                    (
-                        connection,
-                        global.main_ch.current_video,
-                        global.main_ch.start_time,
-                        global.main_ch.video_length
-                    );
+                    global.main_ch.evt.emit(connection);
                 }
+
+                global.main_ch.evt.emit(connection);
+
             })
             .catch((err) =>
             {
@@ -64,13 +60,7 @@ if(!process.env.TESTING) setInterval(() =>
         }
         else
         {
-            global.main_ch.evt.emit
-            (
-                connection,
-                global.main_ch.current_video,
-                global.main_ch.start_time,
-                global.main_ch.video_length
-            );
+            global.main_ch.evt.emit(connection);
         }
     });
 }, 2000);
