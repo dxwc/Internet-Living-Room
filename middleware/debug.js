@@ -69,27 +69,64 @@ module.exports = (app) =>
                 )
             );
         }
+
         else if(req.originalUrl === '/test/vote'){
-             return res.sendFile
+            return res.sendFile
             (
                 path.join
                 (
                     __dirname,
                     '../test/controller/api_0.0.0/manual/vote.html'
                 )
-            );
 
-        }
-        else if(req.originalUrl === '/test/submit_video'){
+            );
+         }
+
+        else if(req.originalUrl === '/test/main_channel_connect')
+        {
              return res.sendFile
+             (
+                path.join
+                (
+                    __dirname,
+                    '../test/controller/main_channel_connect.html'
+                )
+            );
+        }
+        else if(req.originalUrl === '/test/main_channel_chat')
+        {
+            return res.sendFile
             (
                 path.join
                 (
                     __dirname,
-                    '../test/controller/api_0.0.0/manual/submit_video.html'
+                    '../test/controller/main_channel_chat.html'
                 )
             );
 
+                    
+        }
+        else if(req.originalUrl === '/test/api_video_submission')
+        {
+            return res.sendFile
+            (
+                path.join
+                (
+                    __dirname,
+                    '../test/controller/api_0.0.0/manual/api_video_submission.html'
+                )
+            );
+        }
+        else if(req.originalUrl === '/test/api_getting_video')
+        {
+            return res.sendFile
+            (
+                path.join
+                (
+                    __dirname,
+                    '../test/controller/api_0.0.0/manual/api_getting_video.html'
+                )
+            );
         }
         else
         {

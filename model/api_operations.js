@@ -66,52 +66,46 @@ function get_user_info(name)
     });
 }
 
-function submit_video(video_id, which_channel, seconds, who_submit) {
-    // create a new entry in the table named "video"
-    // also create a new entry in the table named "voting"
-    // using findOrCreate https://sequelize.readthedocs.io/en/2.0/docs/models-usage/
-    /*User
-        .findOrCreate({ where: { username: 'sdepold' }, defaults: { job: 'Technical Lead JavaScript' } })
-        .spread((user, created) => {
-            console.log(user.get({
-                plain: true
-            }))
-            console.log(created)
-            /*
-             findOrCreate returns an array containing the object that was found or created and a boolean that will be true if a new object was created and false if not, like so:
-        
-            [ {
-                username: 'sdepold',
-                job: 'Technical Lead JavaScript',
-                id: 1,
-                createdAt: Fri Mar 22 2013 21: 28: 34 GMT + 0100(CET),
-                updatedAt: Fri Mar 22 2013 21: 28: 34 GMT + 0100(CET)
-              },
-              true ]
-        
-         In the example above, the "spread" on line 75 divides the array into its 2 parts and passes them as arguments to the callback function defined beginning at line 39, which treats them as "user" and "created" in this case. (So "user" will be the object from index 0 of the returned array and "created" will equal "true".)
-            *//*
-        }) */
-     return model.video.findOrCreate({ 
-        where: { id: video_id, channel: which_channel }, // where same video appear in the same channel twice
-        defaults: { by: who_submit, length: seconds } // if the video does not exist yet, we will create it with person = user
-    }).spread((vid, created) => {
-        console.log(vid.get({
-            plain: true
-        }))
-        console.log("test:"+created);
-        return [vid, created];
+function submit_video(video_id, which_channel, seconds, who_submit)
+{
+    return model.video.findOrCreate
+    ({
+        // where same video appear in the same channel twice
+        where: { id : video_id, channel : which_channel },
+        // if the video does not exist yet, we will create it
+        defaults: { by : who_submit, length : seconds },
+        attributes : [ 'id' ]
     })
-}
-function get_video_list(channel_id) {
-    // return a list of video submitted in the channel
-    return model.video.findAll({
-        where: {channel: channel_id},
-        raw: true
-    }).then((res) => 
+    .spread((vid, created) =>
     {
-        return res;
-    }).catch((err) =>
+        if(created) return { created : true, id : vid.id }
+        else        return { creted : false, id : vid.id } // TODO: add +1 vote
+    })
+    .catch((err) =>
+    {
+        if(err.original && err.original.code === '23503')
+        {
+            let err = new Error('Channel does not exists');
+            err.code = 'NO_CHANNEL';
+            throw err;
+        }
+        else
+        {
+            throw err;
+        }
+    });
+}
+
+function get_video_list(channel_id)
+{
+    // return a list of video submitted in the channel
+    return model.video.findAll
+    ({
+        where : { channel : channel_id },
+        attributes : [ 'id' ],
+        raw : true
+    })
+    .catch((err) =>
     {
         throw err;
     });
@@ -119,10 +113,39 @@ function get_video_list(channel_id) {
 
 function create_channel(user_id)
 {
-    return model.channel.destroy({ where : { host : user_id }})
-    .then(() => model.channel.create({ host : user_id }))
-    .then((res) => res.dataValues.id)
-    .catch((err) => { throw err });
+    // find if the user is a host
+    return model.channel.findOne({ where : { host : user_id } })
+    .then((result) =>
+    {
+        if(!result)
+        {
+            // create a channel if he is not a host
+            return model.channel.create({ host : user_id })
+            .then((res) => res.dataValues.id)
+            .catch((err) =>
+            {
+                throw err
+            });
+        }
+        else
+        {
+            // if he is host
+            // destroy all the video in the channel, delete channel,
+            // create a new channel
+            return model.video.destroy({ where : { channel : result.id } })
+            .then(() => model.channel.destroy({ where : { host : result.host } }))
+            .then(() => model.channel.create({ host : result.host }))
+            .then((res) => res.dataValues.id)
+            .catch((err) =>
+            {
+                throw err;
+            });
+        }
+    })
+    .catch((err) =>
+    {
+        throw err;
+    });
 }
 
 function get_next_video(channel_id)
@@ -171,6 +194,7 @@ function get_next_main_ch_video()
         throw err;
     });
 }
+
 function validate_vote(username, channel_id, video_id, vote)
 {
 
@@ -241,12 +265,15 @@ function get_user_vote(username, channel_id, video_id){
         throw err;
     })
 }
-module.exports.sign_up        = sign_up;
-module.exports.get_user_info  = get_user_info;
-module.exports.create_channel = create_channel;
-module.exports.get_next_video = get_next_video;
+
+
+module.exports.sign_up                = sign_up;
+module.exports.get_user_info          = get_user_info;
+module.exports.create_channel         = create_channel;
+module.exports.get_next_video         = get_next_video;
 module.exports.get_next_main_ch_video = get_next_main_ch_video;
 module.exports.submit_video           = submit_video;
+module.exports.get_video_list         = get_video_list;
 module.exports.get_video_list         = get_video_list;
 module.exports.validate_vote  = validate_vote;
 module.exports.get_user_vote = get_user_vote;

@@ -1,0 +1,178 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Main channel connection test (run after `npm run dev`)</title>
+</head>
+<body>
+    <button
+        id='connect'
+        type='button'>Connect to recieve chats</button>
+    <button
+        id='stop'
+        type='button'>End connection</button>
+    <hr>
+    <input
+        style='width: 95%'
+        id='inp'
+        type='text'
+        placeholder='Say something to main channel chat stream'>
+    <br>
+    <span id='captcha_node'>Loading Captcha...</span>
+    <input
+        id='captcha_solution'
+        name='captcha_text'
+        type='text'
+        placeholder='Enter captcha solution'>
+    <br>
+    <button
+        id='btn'
+        type='button'>Comment</button>
+    <br>
+    <br>
+    <div id='info' style='color: grey'></div>
+    <hr>
+
+    <div
+        id='stream'
+        style='overflow: scroll; width: 100%; height: 50%; border: solid 1% grey;'>
+    </div>
+
+    <hr>
+    <i>See console.log</i>
+
+    <script>
+        let inp = document.getElementById('inp');
+        let captcha_node = document.getElementById('captcha_node');
+        let info = document.getElementById('info');
+        let captcha_solution = document.getElementById('captcha_solution');
+        let stream = document.getElementById('stream');
+        let sse;
+
+        fetch('/api/0.0.0/auth')
+        .then((res) => res.json())
+        .then((res) =>
+        {
+            if(res.success) captcha_node.innerHTML = res.captcha;
+            else if(res.reason_text) info.innerHTML = res.reason_text;
+            else info.innerHTML = 'Server error';
+        })
+        .catch((err) =>
+        {
+            console.log(err);
+                info.innerHTML = 'Unexpected error, see console.log';
+        });
+
+        connect();
+
+        function send_comment()
+        {
+            if(inp.value.trim().length) return Promise.resolve()
+            .then(() =>
+            {
+                console.log('-> Sending comment');
+                return fetch
+                (
+                    '/main_channel/chat',
+                    {
+                        method : 'POST',
+                        headers :
+                        {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body : JSON.stringify
+                        ({
+                            comment : inp.value,
+                            captcha_text : captcha_solution.value
+                        })
+                    }
+                );
+            })
+            .then((res) =>
+            {
+                console.log('status:', res.status);
+                return res.json();
+            })
+            .then((res) =>
+            {
+                captcha_solution.value = '';
+
+                if(res.success)          info.innerHTML = 'Success';
+                else if(res.reason_text) info.innerHTML = res.reason_text;
+                else                     login_info.innerHTML = 'Server error';
+
+                if(res.captcha)          captcha_node.innerHTML = res.captcha;
+            })
+            .catch((err) =>
+            {
+                console.error('Error posting comment:');
+                console.error(err);
+            });
+        }
+
+        inp.addEventListener('keydown', (e) =>
+        {
+            if(e.key === "Enter") send_comment();
+        });
+        document.getElementById('btn').addEventListener('click', (e) =>
+        {
+            e.preventDefault();
+            send_comment();
+        });
+
+        function connect()
+        {
+            console.log('Starting a sse connection')
+
+            sse = (new EventSource('/main_channel/chat'));
+
+            sse.onmessage = (ev) =>
+            {
+                let data = JSON.parse(ev.data);
+                if
+                (
+                    !data.by      ||
+                    !data.comment ||
+                    typeof(data.users_recieving) !== 'number'
+                )
+                {
+                    console.error('invalid data', data);
+                    return;
+                }
+
+                let span = document.createElement('span');
+                span.innerHTML =
+                    `<i title='${data.users_recieving}'>` +
+                    `${data.by}</i>: ${data.comment}<hr>`;
+                stream.appendChild(span);
+
+                // console.log('\nBy:', data.by);
+                // console.log('Comment:', data.comment);
+                // console.log('User receiving:', data.users_recieving, '\n');
+            }
+
+            sse.onerror = (e) =>
+            console.log('Error, make sure you are logged in', e);
+        }
+
+        document.getElementById('connect').addEventListener('click', (e) =>
+        {
+            e.preventDefault();
+            connect();
+        });
+
+        document.getElementById('stop').addEventListener('click', (e) =>
+        {
+            e.preventDefault();
+
+            console.log('Stopping sse connection if exists');
+
+            if(sse) sse.close();
+            sse = null;
+        });
+
+    </script>
+</body>
+</html>
