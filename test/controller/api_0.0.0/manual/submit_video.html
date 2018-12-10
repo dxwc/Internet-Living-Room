@@ -1,0 +1,57 @@
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Submit Video</title>
+</head>
+<body>
+	<input id="url" type="text" placeholder="url">
+	<input id="username" type="text" placeholder="username">
+	<input id="channel_id" type="text" placeholder="channel_id">
+	<button id="submit" type="button">submit</button>
+	<p id="info"></p>
+	<script>
+        document.addEventListener('DOMContentLoaded', () =>
+        {
+            let url = document.getElementById('url');
+            let username = document.getElementById('username');
+            let channel_id = document.getElementById('channel_id');
+            let submit = document.getElementById('submit');
+            let info = document.getElementById('info');
+            submit.addEventListener('click', (e) => {
+                fetch('/api/0.0.0/submit_video',
+                        {
+                            method : 'POST',
+                            headers :
+                            {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json',
+                                'Access-Control-Allow-Origin': '*'
+                            },
+                            body : JSON.stringify
+                            ({
+                                url: url.value,
+                                who_submit : username.value,
+                                which_channel : channel_id.value
+                            })
+                })
+                .then((res) => res.json())
+                .then((res) => {
+                	console.log("test in manual:"+res);
+                    if(res.created){
+                        info.innerHTML = "created success";
+                    } else {
+                        info.innerHTML = "created failed";
+                    }
+                }).catch((err) =>{
+                	console.log(err);
+                });
+            
+            });
+
+        });
+    </script>
+
+</body>
+</html>

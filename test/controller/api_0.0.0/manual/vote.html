@@ -6,15 +6,18 @@
     <title>Vote</title>
 </head>
 <body>
-    <p>username:</p>
-    <p>channel_id:</p>
-    <p>video_id:</p>
+    <input type="text" placeholder="username" id="username">
+    <input type="text" placeholder="channel_id" id="channel_id">
+    <input type="text" placeholder="video_id" id="video_id">
     <button id="upvote" >upvote</button>
     <button id="downvote">downvote</button>
     <p id="vote_info"></p>
     <script>
         document.addEventListener('DOMContentLoaded', () =>
         {
+            let username = document.getElementById('username');
+            let channel_id = document.getElementById('channel_id');
+            let video_id = document.getElementById('video_id');
             let upvote = document.getElementById('upvote');
             let downvote = document.getElementById('downvote');
             let vote_info = document.getElementById('vote_info');
@@ -29,9 +32,9 @@
                             },
                             body : JSON.stringify
                             ({
-                                username: "vote3",
-                                video_id : "video_id",
-                                channel_id : "channel_id",
+                                username: username.value,
+                                video_id : video_id.value,
+                                channel_id : channel_id.value,
                                 vote: 1
                             })
                 })
@@ -56,9 +59,9 @@
                             },
                             body : JSON.stringify
                             ({
-                                username: "vote2",
-                                video_id : "video_id",
-                                channel_id : "channel_id",
+                                username: username.value,
+                                video_id : video_id.value,
+                                channel_id : channel_id.value,
                                 vote: -1
                             })
                 })
