@@ -2,7 +2,7 @@ let router = require('express').Router();
 let op     = require('../model/api_operations');
 
 router.post
-('/vote', (req, res) =>{
+('/vote', require('../middleware/logged_in_only.js'), (req, res) =>{
 	if( typeof(req.body.username) === 'string' &&
 		typeof(req.body.channel_id) === 'string' &&
 		typeof(req.body.video_id) === 'string' && 
@@ -13,7 +13,7 @@ router.post
 		.then((result) =>{
 
 			console.log(result);
-			return res.status(200).json({msg: "vote", success: true});
+			return res.status(201).json({msg: "vote", success: true});
 		})
 		.catch((err) => {
 			if(err.code === "Already_Voted"){
@@ -22,7 +22,7 @@ router.post
 					reason_code: -1,
 					reason_text: 'already voted for this video',
 				}
-				return res.status(200).json(out);
+				return res.status(201).json(out);
 			} else {
 				return res.status(500).json
 	                ({
@@ -51,7 +51,7 @@ router.get('/vote/:username/:channel_id/:video_id', (req, res) => {
 		op.get_user_vote(req.params.username, req.params.channel_id, req.params.video_id)
 		.then((result) => {
 			result.success = true;
-			return res.status(200).json(result);
+			return res.status(201).json(result);
 
 		}).catch((err) => {
 			throw err;
