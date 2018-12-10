@@ -22,6 +22,7 @@ app.use(passport.session());
 if(process.env.DEV && !process.env.TESTING) require('./middleware/debug.js')(app);
 
 require('./controller/function/channel_setup.js');
+require('./controller/function/main_channel_setup.js');
 app.use(require('./controller/'));
 
 let db = require('./model/setup.js');
