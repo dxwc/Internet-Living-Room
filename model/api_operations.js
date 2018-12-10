@@ -96,6 +96,27 @@ function submit_video(video_id, which_channel, seconds, who_submit)
     });
 }
 
+function main_ch_submit_video(video_id, seconds, who_submit)
+{
+    return model.main_ch_video.findOrCreate
+    ({
+        // where same video appear in the same channel twice
+        where: { id : video_id },
+        // if the video does not exist yet, we will create it
+        defaults: { by : who_submit, length : seconds },
+        attributes : [ 'id' ]
+    })
+    .spread((vid, created) =>
+    {
+        if(created) return { created : true, id : vid.id }
+        else        return { creted : false, id : vid.id } // TODO: add +1 vote
+    })
+    .catch((err) =>
+    {
+        throw err;
+    });
+}
+
 function get_video_list(channel_id)
 {
     // return a list of video submitted in the channel
@@ -202,3 +223,4 @@ module.exports.get_next_video         = get_next_video;
 module.exports.get_next_main_ch_video = get_next_main_ch_video;
 module.exports.submit_video           = submit_video;
 module.exports.get_video_list         = get_video_list;
+module.exports.main_ch_submit_video   = main_ch_submit_video;
