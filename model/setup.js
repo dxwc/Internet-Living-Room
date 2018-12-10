@@ -21,7 +21,7 @@ const user = sequelize.define
         {
             type : Sequelize.UUID,
             defaultValue : Sequelize.UUIDV4,
-            primaryKey: true
+            primaryKey: true,
         },
         uname :
         {
@@ -99,7 +99,7 @@ const video = sequelize.define
             }
         },
         length : // duration in seconds
-        {
+        { 
             type : Sequelize.INTEGER,
             allowNull : false,
             validate :
@@ -127,17 +127,29 @@ const video = sequelize.define
 
 const vote = sequelize.define(
     'vote', {
-        username :
+        user_id :
         {
-            type : Sequelize.STRING,
+            type : Sequelize.UUID,
+            references:{
+                model: user,
+                key: 'id'
+            }
         },
         channel_id :
         {
-            type: Sequelize.STRING,
+            type: Sequelize.UUID,
+            references:{
+                model: channel,
+                key: 'id'
+            }
         },
         video_id :
         {
-            type: Sequelize.STRING,
+            type: Sequelize.TEXT,
+            references:{
+                model: video,
+                key: 'id'
+            }
         },
         vote :
         {
@@ -154,7 +166,7 @@ function connect()
         sequelize.sync
         ({
             logging : false,
-            //force: true, // deletes all data
+            force: true, // deletes all data
             // alter : true // deleted data where necessary
         })
         .then(() =>
