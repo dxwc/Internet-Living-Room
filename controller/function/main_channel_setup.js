@@ -45,7 +45,7 @@ if(!process.env.TESTING) setInterval(() =>
                 {
                     global.main_ch.current_video = res.id;
                     global.main_ch.video_length  = res.length;
-                    global.main_ch.start_time    = new Date().getTime() + 1000;
+                    global.main_ch.start_time    = new Date().getTime() + 200;
 
                     global.main_ch.evt.emit(connection);
                 }

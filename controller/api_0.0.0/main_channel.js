@@ -28,9 +28,10 @@ router.get('/api/0.0.0/main_channel/connect', (req, res) =>
             (
                 {
                     video_id : global.main_ch.current_video,
-                    play_at  : global.main_ch.current_video === 'XOacA3RYrXk' ?
-                            null :
-                            (new Date().getTime() - global.main_ch.start_time)/1000,
+                    play_at  :
+                        (
+                            new Date().getTime() - global.main_ch.start_time
+                        )/1000,
                     users_recieving : global.main_ch.evt.eventNames().length
                 }
             )}\n\n`

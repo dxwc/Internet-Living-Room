@@ -4,7 +4,9 @@
     <div class='mx-auto' style='width : 70%'>
     <h2 class='text-center'>Sign In</h2>
     <? if(locals.name !== false) { ?>
-        You are already signed in as user '<?= name ?>'. No need to sign in again.
+        <p class='text-center'>
+            You are already signed in as user '<?= name ?>'. No need to sign in again.
+        </p>
     <? } else { ?>
         <form>
         <div class='form-group'>
