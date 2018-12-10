@@ -107,7 +107,7 @@ const video = sequelize.define
                 min : 0
             }
         },
-        by : // submitted by user
+        by : // first submitted by user
         {
             type : Sequelize.UUID,
             references :
@@ -115,12 +115,6 @@ const video = sequelize.define
                 model : user,
                 key : 'id'
             }
-        },
-        vote : // vote count
-        {
-            type : Sequelize.INTEGER,
-            defaultValue : 0,
-            allowNull : false
         }
     }
 );
