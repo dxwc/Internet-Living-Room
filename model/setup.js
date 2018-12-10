@@ -82,6 +82,7 @@ const video = sequelize.define
         {
             type : Sequelize.TEXT,
             primaryKey : true,
+            unique: true,
             validate :
             {
                 is  : /^[a-zA-Z0-9_-]+$/, // https://youtu.be/gocwRvLhDf8
