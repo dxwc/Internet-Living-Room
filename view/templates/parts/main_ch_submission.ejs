@@ -1,14 +1,9 @@
-<div class='mx-auto' style='width : 70%'>
 <? if(locals.name !== false) { ?>
-    <button
-        class='btn btn-primary'
-        type='button'
-        data-toggle='collapse'
-        data-target='#submission'
-        >
-        Submit a video
-    </button>
-    <div id='submission' class='collapse card card-body'>
+<div
+    id='submission'
+    class='card card-body rounded-0'
+    style='margin-top: 10%; margin-bottom: 10%'>
+    <h3 class='card-title'>Submit video</h3>
     <div class='form-group'>
         <label for='video_url'>Enter a youtube video url</label>
         <input
@@ -37,8 +32,8 @@
         id='btn'
         type='submit'>Submit</button>
     <div class='form-group font-italic' id='info'></div>
-    </div>
-    <script>
+</div>
+<script>
     document.addEventListener('DOMContentLoaded', (e) =>
     {
         let video_url    = document.getElementById('video_url');
@@ -188,10 +183,9 @@
             });
         }
     });
-    </script>
+</script>
 <? } else { ?>
-        <p class='card card-body text-center'>
-            You must be signed in to send video to play on this channel
-        </p>
+    <p class='card card-body text-center'>
+        You must be signed in to send video to play on this channel
+    </p>
 <? } ?>
-</div>

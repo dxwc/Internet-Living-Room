@@ -2,13 +2,13 @@ let router = require('express').Router();
 let Event  = require('events');
 let xss    = require('xss-filters');
 let c      = require('./_common.js');
+let uuid   = require('uuid/v4');
 
 global.chat = new Event();
 
 router.get
 (
     '/api/0.0.0/main_channel/chat',
-    require('../../middleware/logged_in_only.js'),
     (req, res) =>
     {
         res.setHeader('Cache-Control', 'no-cache');
@@ -31,11 +31,12 @@ router.get
             );
         }
 
-        global.chat.on(req.session.passport.user.id, event_listener);
+        let evt_on_name = uuid();
+
+        global.chat.on(evt_on_name, event_listener);
         res.on('close', () =>
         {
-            global.chat.removeListener
-            (req.session.passport.user.id, event_listener);
+            global.chat.removeListener (evt_on_name, event_listener);
         });
     }
 );
@@ -44,7 +45,7 @@ router.post
 (
     '/api/0.0.0/main_channel/chat',
     require('../../middleware/logged_in_only.js'),
-    require('../../middleware/captcha_control.js'),
+    // require('../../middleware/captcha_control.js'),
     (req, res) =>
     {
         if(typeof(req.body.comment) !== 'string' && req.body.comment.trim().length)
