@@ -71,22 +71,24 @@ module.exports = (app) =>
         }
 
         else if(req.originalUrl === '/test/vote'){
-             return res.sendFile
-             (
+            return res.sendFile
+            (
                 path.join
                 (
                     __dirname,
                     '../test/controller/api_0.0.0/manual/vote.html'
                 )
+
             );
          }
+
         else if(req.originalUrl === '/test/main_channel_connect')
         {
-            return res.sendFile
-            (
+             return res.sendFile
+             (
                 path.join
                 (
-                __dirname,
+                    __dirname,
                     '../test/controller/main_channel_connect.html'
                 )
             );
@@ -101,6 +103,8 @@ module.exports = (app) =>
                     '../test/controller/main_channel_chat.html'
                 )
             );
+
+                    
         }
         else if(req.originalUrl === '/test/api_video_submission')
         {

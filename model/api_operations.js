@@ -195,6 +195,7 @@ function get_next_main_ch_video()
     });
 }
 
+
 function validate_vote(user_id, channel_id, video_id, v)
 {
         return model.vote.findOrCreate
@@ -248,6 +249,7 @@ function get_user_vote(user_id, channel_id, video_id){
         throw err;
     })
 }
+
 function get_total_vote(channel_id, video_id){
     return model.vote.findAll({
         where: {
@@ -289,12 +291,14 @@ function highest_vote(channel_id){
 
 }
 
+
 module.exports.sign_up                = sign_up;
 module.exports.get_user_info          = get_user_info;
 module.exports.create_channel         = create_channel;
 module.exports.get_next_video         = get_next_video;
 module.exports.get_next_main_ch_video = get_next_main_ch_video;
 module.exports.submit_video           = submit_video;
+module.exports.get_video_list         = get_video_list;
 module.exports.get_video_list         = get_video_list;
 module.exports.validate_vote  = validate_vote;
 module.exports.get_user_vote = get_user_vote;
