@@ -1,6 +1,16 @@
 const Sequelize = require('sequelize');
 
-const sequelize = new Sequelize
+const sequelize = process.env.DATABASE_URL ?
+new Sequelize
+(
+    process.env.DATABASE_URL,
+    {
+        dialect : 'postgres',
+        logging : false,
+        operatorsAliases : false // removes a deprecation warning
+    }
+) :
+new Sequelize
 (
     'ilr',
     'ilr_admin',
