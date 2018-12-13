@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Get Total Vote</title>
+</head>
+<body>
+<input type="text" placeholder="channel_id" id="channel_id"><br>
+<input type="text" placeholder="video_id" id="video_id"><br>
+<button type="button" id="get-total-vote">submit</button><br>
+<p>Total Vote: <span id="total-vote"></span></p>
+<script type="text/javascript">
+	document.addEventListener('DOMContentLoaded', () =>
+        {
+            let channel_id = document.getElementById('channel_id');
+            let video_id = document.getElementById('video_id');
+            let get_total_vote = document.getElementById('get-total-vote');
+            let total_vote = document.getElementById('total-vote');
+            get_total_vote.addEventListener('click', (e) => {
+                fetch(`/total_vote/${channel_id.value}/${video_id.value}`,
+                        {
+                            method : 'GET',
+                            headers :
+                            {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            }
+                })
+                .then((res) => res.json())
+                .then((res) => {
+                    if(res.success){
+                        total_vote.innerHTML = res.vote;
+                    } else {
+                        total_vote.innerHTML = "Failed";
+                    }
+                });
+            
+            });
+
+          
+
+        });
+
+</script>
+</body>
+</html>

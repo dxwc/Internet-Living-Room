@@ -6,16 +6,14 @@
     <title>Vote</title>
 </head>
 <body>
-    <input type="text" placeholder="username" id="username">
-    <input type="text" placeholder="channel_id" id="channel_id">
-    <input type="text" placeholder="video_id" id="video_id">
+    <input type="text" placeholder="channel_id" id="channel_id"><br>
+    <input type="text" placeholder="video_id" id="video_id"><br>
     <button id="upvote" >upvote</button>
     <button id="downvote">downvote</button>
     <p id="vote_info"></p>
     <script>
         document.addEventListener('DOMContentLoaded', () =>
         {
-            let username = document.getElementById('username');
             let channel_id = document.getElementById('channel_id');
             let video_id = document.getElementById('video_id');
             let upvote = document.getElementById('upvote');
@@ -32,7 +30,6 @@
                             },
                             body : JSON.stringify
                             ({
-                                username: username.value,
                                 video_id : video_id.value,
                                 channel_id : channel_id.value,
                                 vote: 1
@@ -58,8 +55,7 @@
                                 'Content-Type': 'application/json'
                             },
                             body : JSON.stringify
-                            ({
-                                username: username.value,
+                            ({ 
                                 video_id : video_id.value,
                                 channel_id : channel_id.value,
                                 vote: -1

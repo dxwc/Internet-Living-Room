@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Get User Vote</title>
+</head>
+<body>
+<input type="text" placeholder="user_id" id="user_id"><br>
+<input type="text" placeholder="channel_id" id="channel_id"><br>
+<input type="text" placeholder="video_id" id="video_id"><br>
+<button type="button" id="get-user-vote">submit</button>
+<p>Vote:<span id="vote"></span></p>
+<script type="text/javascript">
+	document.addEventListener('DOMContentLoaded', () =>
+        {
+            let user_id = document.getElementById('user_id');
+            let channel_id = document.getElementById('channel_id');
+            let video_id = document.getElementById('video_id');
+            let get_user_vote = document.getElementById('get-user-vote');
+            let vote = document.getElementById('vote');
+            get_user_vote.addEventListener('click', (e) => {
+                fetch(`/user_vote/${user_id.value}/${channel_id.value}/${video_id.value}`,
+                        {
+                            method : 'GET',
+                            headers :
+                            {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            }
+                })
+                .then((res) => res.json())
+                .then((res) => {
+                    if(res.success){
+                        console.log(res);
+                        vote.innerHTML = res.vote;
+                    } else {
+                        vote.innerHTML = "Failed";
+                    }
+                });
+            
+            });
+
+          
+
+        });
+
+</script>
+</body>
+</html>

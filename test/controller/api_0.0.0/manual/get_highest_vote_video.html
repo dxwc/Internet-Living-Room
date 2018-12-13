@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Get Highest Vote Video</title>
+</head>
+<body>
+<input type="text" placeholder="channel_id" id="channel_id"><br>
+<button type="button" id="get-highest-vote">submit</button><br>
+<p>Video id: <span id="video_id"></span></p>
+<p>Total Vote: <span id="total-vote"></span></p>
+<script type="text/javascript">
+	document.addEventListener('DOMContentLoaded', () =>
+        {
+            let channel_id = document.getElementById('channel_id');
+            let video_id = document.getElementById('video_id');
+            let get_highest_vote = document.getElementById('get-highest-vote');
+            let total_vote = document.getElementById('total-vote');
+            get_highest_vote.addEventListener('click', (e) => {
+                fetch(`/highest_vote/${channel_id.value}`,
+                        {
+                            method : 'GET',
+                            headers :
+                            {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            }
+                })
+                .then((res) => res.json())
+                .then((res) => {
+                    if(res.success){
+                        video_id.innerHTML = res.video_id;
+                        total_vote.innerHTML = res.vote;
+
+                    } else {
+                        total_vote.innerHTML = "Failed";
+                    }
+                });
+            
+            });
+
+          
+
+        });
+
+</script>
+</body>
+</html>
