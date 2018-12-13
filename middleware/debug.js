@@ -124,6 +124,39 @@ module.exports = (app) =>
                 )
             );
         }
+         else if(req.originalUrl === '/test/get_user_vote')
+        {
+            return res.sendFile
+            (
+                path.join
+                (
+                    __dirname,
+                    '../test/controller/api_0.0.0/manual/get_user_vote.html'
+                )
+            );
+        }
+        else if(req.originalUrl === '/test/get_total_vote')
+        {
+            return res.sendFile
+            (
+                path.join
+                (
+                    __dirname,
+                    '../test/controller/api_0.0.0/manual/get_total_vote.html'
+                )
+            );
+        }
+        else if(req.originalUrl === '/test/get_highest_vote_video')
+        {
+            return res.sendFile
+            (
+                path.join
+                (
+                    __dirname,
+                    '../test/controller/api_0.0.0/manual/get_highest_vote_video.html'
+                )
+            );
+        }
         else
         {
             return res.sendFile
