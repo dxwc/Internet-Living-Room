@@ -84,10 +84,14 @@
 
         if
         (
-            first_video ||
-            (player.getPlayerState() === 1 && // playing
-            data.play_at > 0              &&
-            player.getVideoData().video_id !== data.video_id)
+            (
+                first_video                                        ||
+                player.getPlayerState() === YT.PlayerState.PLAYING ||
+                player.getPlayerState() === YT.PlayerState.ENDED
+            )                &&
+            data.play_at > 0 &&
+            data.video_id    &&
+            player.getVideoData().video_id !== data.video_id
         )
         {
             first_video = false;
@@ -107,10 +111,10 @@
         (
             data.play_at > 0 &&
             (
-                player.getPlayerState() === 1 ||
+                player.getPlayerState() === YT.PlayerState.PLAYING ||
                 (
                     player.getVideoData().video_id === data.video_id &&
-                    player.getPlayerState() === 0
+                    player.getPlayerState() === YT.PlayerState.ENDED
                 )
             )
         )
