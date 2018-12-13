@@ -10,18 +10,6 @@
 
 <script>
 {
-    /** Keep video height smaller than browser height **/
-    // let video_container = document.getElementById('video_container');
-    // video_container.style = `max-height: ${window.innerHeight}px;`;
-    // window.addEventListener('resize', (e) =>
-    // {
-    //     video_container.style = `max-height: ${window.innerHeight}px;`;
-    // });
-}
-</script>
-
-<script>
-{
     /** <Add youtube iframe API script> **/
     let tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
@@ -53,7 +41,8 @@
                 },
                 events:
                 {
-                    'onReady': onPlayerReady
+                    onReady : onPlayerReady,
+                    onStateChange : onPlayerStateChange
                 }
             }
         );
@@ -61,6 +50,7 @@
 
     let sse;
     let sse_recieved_any_data = false;
+    let first_video = true;
     let ran_once = false;
     function onPlayerReady(event)
     {
@@ -90,11 +80,17 @@
     function handle_sse_connection(e)
     {
         let data = JSON.parse(e.data);
-        console.log(data);
         sse_recieved_any_data = true;
 
-        if(data.play_at > 0 && player.getVideoData().video_id !== data.video_id)
+        if
+        (
+            first_video ||
+            (player.getPlayerState() === 1 && // playing
+            data.play_at > 0              &&
+            player.getVideoData().video_id !== data.video_id)
+        )
         {
+            first_video = false;
             player.loadVideoById
             (
                 {
@@ -128,22 +124,29 @@
             // precise but it may increase skipping/lagging
             if(!is_in_range(player.getCurrentTime(), data.play_at, 1.3))
                 player.seekTo(data.play_at);
-
-            // Change page title to indicate which video is currently playing
-            if(document.title !== 'NOW PLAYING: ' + player.getVideoData().title)
-                document.title = 'NOW PLAYING: ' + player.getVideoData().title;
         }
-        else if(player.getPlayerState() === 2)
+    }
+
+    let should_be_title;
+    function onPlayerStateChange(e)
+    {
+        if(e.data === YT.PlayerState.PLAYING)
+        {
+            should_be_title = 'NOW PLAYING: ' + player.getVideoData().title;
+            if(document.title !== should_be_title) document.title = should_be_title;
+        }
+        else if(e.data === YT.PlayerState.PAUSED)
         {
             document.title = 'PAUSED';
         }
-        else if(player.getPlayerState() === 3)
+        else if(e.data === YT.PlayerState.BUFFERING)
         {
-            document.title = 'YOUTUBE BUFFERING / SERVER SYNCING';
+            document.title =
+            'YOUTUBE BUFFERING / SERVER SYNCING';
         }
         else
         {
-            document.title = 'Public Room Prototype';
+            document.title = 'Waitting...';
         }
     }
 }

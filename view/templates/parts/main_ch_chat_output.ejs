@@ -10,40 +10,10 @@
 </style>
 <div
     id='chat_container'
-    class='card card-body rounded-0 col-3'></div>
-<style>
-    #chat_container
-    {
-        overflow-y: scroll;
-        padding-bottom: 1%;
-        /* height:64.7vh; */
-    }
-</style>
-<script>
-{
-    document.addEventListener('DOMContentLoaded', () =>
-    {
-        let style = document.createElement('style');
-        let video_container = document.getElementById('video_container');
-        style.innerHTML = `#chat_container { max-height : ${video_container.offsetHeight}px; }`;
-        document.appendChild(style);
-        // let chat_container = document.getElementById('chat_container');
-        // chat_container.style.maxHeight = video_container.offsetHeight + 'px;';
-        // console.log('-------------------->', video_container.offsetHeight);
-    });
-    // let max = chat_container.offsetHeight;
-    // chat_container.style = `max-height: ${chat_container.offsetHeight}px;`;
-    // window.addEventListener('resize', (e) =>
-    // {
-        // chat_container.style = `max-height: ${chat_container.offsetHeight}px;`;
-    // });
-}
-</script>
-
+    class='card card-body rounded-0 border-left-0 col-3' style='overflow-y: scroll'></div>
 
 <script>
 {
-
     let sse_chat = (new EventSource('/api/0.0.0/main_channel/chat'));
     document.addEventListener('DOMContentLoaded', () =>
     {
@@ -68,9 +38,13 @@
             let a = document.createElement('a');
             a.href =`/user/${data.by}`;
             a.innerHTML = data.by;
+            a.title = new Date().toLocaleString();
 
             let seperator = document.createTextNode(': ');
             let comment = document.createTextNode(data.comment);
+            span.title = data.users_recieving ?
+                            ' Recieved by ' + data.users_recieving + ' users' :
+                            '';
 
             span.append(a);
             span.append(seperator);

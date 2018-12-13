@@ -5,7 +5,7 @@
     <span class='navbar-right'>
         <? if(locals.name !== false) { ?>
         <p class='navbar-text font-italic'>
-            <?= name ?>
+            <a href='/user/<?= name ?>'><?= name ?></a>
         </p>
         <button
             id='logout'
