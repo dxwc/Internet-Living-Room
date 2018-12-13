@@ -34,18 +34,18 @@
     <?- include('./parts/main_ch_chat_input.ejs', { name : locals.name }) ?>
     <?- include('./parts/main_ch_submission.ejs', { name : locals.name }) ?>
 
-        <script>
-        let dom;
+    <script>
+    let dom;
 
-        document.getElementById('chat_container')
-        .addEventListener
-        (
-            'DOMNodeInserted', (e) =>
-            {
-                dom = document.getElementById('chat_container');
-                dom.scrollTop = dom.scrollHeight;
-            }
-        );
-        </script>
+    document.getElementById('chat_container')
+    .addEventListener
+    (
+        'DOMNodeInserted', (e) =>
+        {
+            dom = document.getElementById('chat_container');
+            dom.scrollTop = dom.scrollHeight;
+        }
+    );
+    </script>
 </body>
 </html>
