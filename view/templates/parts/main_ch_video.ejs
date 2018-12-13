@@ -9,6 +9,8 @@
 </div>
 
 <script>
+    let player;
+
 {
     /** <Add youtube iframe API script> **/
     let tag = document.createElement('script');
@@ -17,7 +19,6 @@
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
     /** </> **/
 
-    let player;
     function onYouTubeIframeAPIReady()
     {
         player = new YT.Player
@@ -129,6 +130,8 @@
             if(!is_in_range(player.getCurrentTime(), data.play_at, 1.3))
                 player.seekTo(data.play_at);
         }
+
+        if(process_stats) process_stats(data);
     }
 
     let should_be_title;

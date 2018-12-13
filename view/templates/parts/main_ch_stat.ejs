@@ -1,0 +1,32 @@
+<div class=''>
+    <p id='stat1'></p>
+    <progress id='stat2' max='100' min='0' style='width: 100%'></progress>
+</div>
+<script>
+    let stat1 = document.getElementById('stat1');
+    let stat2 = document.getElementById('stat2');
+    function process_stats(data)
+    {
+        if
+        (
+            data.users_recieving &&
+            stat1.innerHTML !== data.users_recieving + ' watching'
+        )
+            stat1.innerHTML = data.users_recieving + ' watching';
+    }
+
+    setInterval(() =>
+    {
+        if(!player || !player.getDuration || !player.getCurrentTime)
+        {
+            stat2.removeAttribute('value');
+            return;
+        }
+
+        let fraction = player.getCurrentTime()/player.getDuration();
+        if(typeof(fraction) === 'number')
+            stat2.setAttribute('value',  Math.round(fraction*100))
+        else
+            stat2.removeAttribute('value')
+    }, 500);
+</script>
