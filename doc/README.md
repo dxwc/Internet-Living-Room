@@ -70,5 +70,7 @@ SELECT i.relname AS name, ix.indisprimary AS primary, ix.indisunique AS unique, 
     + `heroku pg:psql` to use psql
     + Ensure branch that is ready to deploy has all important changes committed and then
       run `git push heroku <branch to deploy>:master` to deploy
+    + `heroku ps:scale web=0` to turn off
+    + `heroku ps:scale web=1` to turn back on
 + <https://devcenter.heroku.com/articles/getting-started-with-nodejs>
 + <https://devcenter.heroku.com/articles/heroku-postgresql>
