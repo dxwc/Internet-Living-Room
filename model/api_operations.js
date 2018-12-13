@@ -195,45 +195,28 @@ function get_next_main_ch_video()
     });
 }
 
-function validate_vote(username, channel_id, video_id, vote)
+function validate_vote(user_id, channel_id, video_id, v)
 {
-
-        return model.vote.findOne(
-        { where: {
-            username: username,
-            channel_id: channel_id,
-            video_id: video_id,
-
-        }})
-        .then((res) => {
-            console.log(res);
-            if(res === null){
-                //model.video.update
-               model.video.findOne(
-               {
-                where: {
-                    id: video_id,
-                    channel: channel_id,
+        return model.vote.findOrCreate
+        ({
+            where: {
+                user_id: user_id,
+                channel_id: channel_id,
+                video_id: video_id,
+            },
+            defaults: {vote: v}
+        })
+        .spread((vote, created) => {
+            if(created){
+                if(v === 1){
+                    model.video.increment('vote', 
+                        {where: {id: video_id, channel: channel_id}});
+                } else if(v === -1){
+                    model.video.decrement('vote', 
+                        {where: {id: video_id, channel: channel_id}});
                 }
-               })
-               .then((video) =>{
-                    if(vote === 1){
-                        video.increment('vote');
-                    } else {
-                        video.decrement('vote');
-                    }
-                    
-               }).catch(err => {
-                    throw err;
-               });
-
-               return model.vote.create({
-                    username: username,
-                    channel_id: channel_id,
-                    video_id: video_id,
-                    vote: vote,
-                });
-
+                return {success: true}
+                
             } else {
                 let  err = new Error('Already Voted for this video');
                 err.code = 'Already_Voted';
@@ -246,10 +229,10 @@ function validate_vote(username, channel_id, video_id, vote)
 
 }
 
-function get_user_vote(username, channel_id, video_id){
+function get_user_vote(user_id, channel_id, video_id){
     return model.vote.findOne({
         where: {
-            username: username,
+            user_id: user_id,
             channel_id: channel_id,
             video_id: video_id
         }
@@ -265,7 +248,46 @@ function get_user_vote(username, channel_id, video_id){
         throw err;
     })
 }
+function get_total_vote(channel_id, video_id){
+    return model.vote.findAll({
+        where: {
+            channel_id: channel_id,
+            video_id: video_id,
+        }
+    }).then((result) =>{
+        //console.log(result);
+        if(result === null){
+            let err = new Error("Vote doesn't exist");
+            err.code = "Vote_Does_Not_Exist";
+            throw err;
+        } else {
+            const total_vote = result.map((user_vote) =>{
+                return user_vote.vote;
+            })
+            let sum = 0;
+            for(let i=0; i<total_vote.length; i++){
+                sum += total_vote[i];
+            }
+            return sum;
+           
+        }
+    }).catch((err) =>{
+        return err;
+    });
+}
+function highest_vote(channel_id){
+    return model.video.findAll({
+        limit: 1,
+        where: {channel: channel_id},
+        order: [['vote', 'DESC']]
+    }).then((result) =>{
+        return [result[0].id, result[0].vote];
+    })
+    .catch((err)=>{
+        throw err;
+    })
 
+}
 
 module.exports.sign_up                = sign_up;
 module.exports.get_user_info          = get_user_info;
@@ -276,3 +298,5 @@ module.exports.submit_video           = submit_video;
 module.exports.get_video_list         = get_video_list;
 module.exports.validate_vote  = validate_vote;
 module.exports.get_user_vote = get_user_vote;
+module.exports.get_total_vote = get_total_vote;
+module.exports.highest_vote = highest_vote;
