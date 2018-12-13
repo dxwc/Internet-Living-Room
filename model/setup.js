@@ -116,6 +116,11 @@ const video = sequelize.define
                 model : user,
                 key : 'id'
             }
+        },
+        vote :
+        {
+            type: Sequelize.INTEGER,
+            defaultValue: 0,
         }
     }
 );
@@ -196,7 +201,7 @@ function connect()
         sequelize.sync
         ({
             logging : false,
-            force: true, // deletes all data
+            //force: true, // deletes all data
             // alter : true // deleted data where necessary
         })
         .then(() =>
