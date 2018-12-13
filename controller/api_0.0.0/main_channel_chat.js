@@ -34,9 +34,18 @@ router.get
         let evt_on_name = uuid();
 
         global.chat.on(evt_on_name, event_listener);
+
+        let keep_connection_alive = setInterval(() =>
+        // Every 5 second, send something to prevent browser from closing as an unused
+        // connection
+        {
+            res.write(`data: ${JSON.stringify({ keeping_alive : true })}\n\n`);
+        }, 5000);
+
         res.on('close', () =>
         {
-            global.chat.removeListener (evt_on_name, event_listener);
+            clearInterval(keep_connection_alive);
+            global.chat.removeListener(evt_on_name, event_listener);
         });
     }
 );

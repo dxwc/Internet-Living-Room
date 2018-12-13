@@ -10,7 +10,8 @@
 </style>
 <div
     id='chat_container'
-    class='card card-body rounded-0 border-left-0 col-3' style='overflow-y: scroll'></div>
+    class='card card-body rounded-0 border-left-0 col-3' style='overflow-y: scroll'>
+</div>
 
 <script>
 {
@@ -26,7 +27,7 @@
         sse_chat.onmessage = (ev) =>
         {
             let data = JSON.parse(ev.data);
-            console.log(data);
+            if(data.keeping_alive) return;
             if(!data.by || !data.comment)
             {
                 console.error('invalid data', data);
