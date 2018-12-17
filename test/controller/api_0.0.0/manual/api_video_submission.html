@@ -1,0 +1,108 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Video Submission Manul Test</title>
+</head>
+<body>
+    <form method='post' action='/api/0.0.0/submit_video'>
+        URL: <input id='url' name='url' type='text' placeholder='video url'><br>
+        For channel: <input id='ch' name='which_channel' placeholder='channel id'><br>
+        <div id='captcha_node'>Loading Captcha...</div>
+        Solution:
+        <input id='captcha_text' type='text' placeholder='captcha solution'><br>
+        <button id='btn' type='button'>Submit</button>
+        <div id='info' style='color: grey; font-style: italic;'></div>
+    </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () =>
+        {
+            let url = document.getElementById('url');
+            let ch = document.getElementById('ch');
+            let captcha_node = document.getElementById('captcha_node');
+            let info = document.getElementById('info');
+            let btn = document.getElementById('btn');
+            let captcha_text = document.getElementById('captcha_text');
+
+            function init_captcha_set()
+            {
+                fetch('/api/0.0.0/auth')
+                .then((res) => res.json())
+                .then((res) =>
+                {
+                    if(res.success) captcha_node.innerHTML = res.captcha;
+                    else if(res.reason_text) info.innerHTML = res.reason_text;
+                    else info.innerHTML = 'Server error';
+                })
+                .catch((err) =>
+                {
+                    console.log(err);
+                        info.innerHTML = 'Unexpected error, see console.log';
+                });
+            }
+
+            init_captcha_set();
+
+
+            btn.addEventListener('click', (e) =>
+            {
+                e.preventDefault();
+
+                Promise.resolve()
+                .then(() =>
+                {
+                    info.innerHTML = 'Making request...'
+                })
+                .then(() =>
+                {
+                    return fetch
+                    (
+                        '/api/0.0.0/submit_video',
+                        {
+                            method : 'POST',
+                            headers :
+                            {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            },
+                            body : JSON.stringify
+                            ({
+                                url : url.value,
+                                which_channel : ch.value,
+                                captcha_text : captcha_text.value
+                            })
+                        }
+                    );
+                })
+                .then((res) => res.json())
+                .then((res) =>
+                {
+                    captcha_text.value = '';
+
+                    if(res.success)
+                    {
+                        info.innerHTML = 'Succesful';
+                        if(res.id) info.innerHTML += '<br>video id: ' + res.id;
+                        console.log(res);
+                    }
+                    else if(res.reason_text)
+                        info.innerHTML = res.reason_text;
+                    else info.innerHTML = 'Server error';
+
+                    if(res.captcha)
+                        captcha_node.innerHTML = res.captcha;
+                    else
+                        init_captcha_set();
+                })
+                .catch((err) =>
+                {
+                    console.log(err);
+                    info.innerHTML = 'Unexpected error, see console.log';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

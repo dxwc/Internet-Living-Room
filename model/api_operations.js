@@ -66,20 +66,91 @@ function get_user_info(name)
     });
 }
 
+function submit_video(video_id, which_channel, seconds, who_submit)
+{
+    return model.video.findOrCreate
+    ({
+        // where same video appear in the same channel twice
+        where: { id : video_id, channel : which_channel },
+        // if the video does not exist yet, we will create it
+        defaults: { by : who_submit, length : seconds },
+        attributes : [ 'id' ]
+    })
+    .spread((vid, created) =>
+    {
+        if(created) return { created : true, id : vid.id }
+        else        return { creted : false, id : vid.id } // TODO: add +1 vote
+    })
+    .catch((err) =>
+    {
+        if(err.original && err.original.code === '23503')
+        {
+            let err = new Error('Channel does not exists');
+            err.code = 'NO_CHANNEL';
+            throw err;
+        }
+        else
+        {
+            throw err;
+        }
+    });
+}
+
+function get_video_list(channel_id)
+{
+    // return a list of video submitted in the channel
+    return model.video.findAll
+    ({
+        where : { channel : channel_id },
+        attributes : [ 'id' ],
+        raw : true
+    })
+    .catch((err) =>
+    {
+        throw err;
+    });
+}
+
 function create_channel(user_id)
 {
-    return model.channel.destroy({ where : { host : user_id }})
-    .then(() => model.channel.create({ host : user_id }))
-    .then((res) => res.dataValues.id)
-    .catch((err) => { throw err });
+    // find if the user is a host
+    return model.channel.findOne({ where : { host : user_id } })
+    .then((result) =>
+    {
+        if(!result)
+        {
+            // create a channel if he is not a host
+            return model.channel.create({ host : user_id })
+            .then((res) => res.dataValues.id)
+            .catch((err) =>
+            {
+                throw err
+            });
+        }
+        else
+        {
+            // if he is host
+            // destroy all the video in the channel, delete channel,
+            // create a new channel
+            return model.video.destroy({ where : { channel : result.id } })
+            .then(() => model.channel.destroy({ where : { host : result.host } }))
+            .then(() => model.channel.create({ host : result.host }))
+            .then((res) => res.dataValues.id)
+            .catch((err) =>
+            {
+                throw err;
+            });
+        }
+    })
+    .catch((err) =>
+    {
+        throw err;
+    });
 }
 
 function get_next_video(channel_id)
-// TODO: fix function after correct model is added
 {
-    return Promise.resolve([channel_id, null]);
-    /*
-    return model.?????.findOne
+    return model.video.findOne
     ({
         where : { channel : channel_id },
         order : [ ['vote', 'DESC'] ]
@@ -99,15 +170,11 @@ function get_next_video(channel_id)
     {
         throw err;
     });
-    */
 }
 
 function get_next_main_ch_video()
-// TODO: fix function after correct model is added
 {
-    return Promise.resolve(null);
-    /*
-    return model.????.findOne
+    return model.video.findOne
     ({
         order : [ ['vote', 'DESC'] ]
     })
@@ -126,7 +193,6 @@ function get_next_main_ch_video()
     {
         throw err;
     });
-    */
 }
 
 module.exports.sign_up                = sign_up;
@@ -134,3 +200,5 @@ module.exports.get_user_info          = get_user_info;
 module.exports.create_channel         = create_channel;
 module.exports.get_next_video         = get_next_video;
 module.exports.get_next_main_ch_video = get_next_main_ch_video;
+module.exports.submit_video           = submit_video;
+module.exports.get_video_list         = get_video_list;
