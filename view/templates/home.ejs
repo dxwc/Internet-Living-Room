@@ -1,12 +1,52 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Home</title>
-</head>
-<body>
-    
+<?- include('./parts/top', { title : 'Home' }) ?>
+<body class='container-fluid mx-auto' style='width: 95%'>
+    <style>
+        .video-chat-row
+        {
+            display: flex;
+            width: 100%;
+            position: relative;
+        }
+
+        #video_container
+        {
+            flex: 0 0 75%;
+            background-color: black;
+        }
+
+        #chat_container
+        {
+            position: absolute;
+            width: 25%;
+            left: 75%;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            overflow-y: scroll;
+            overflow-x: hidden;
+        }
+    </style>
+    <?- include('./parts/navigation.ejs', { name : locals.name }) ?>
+    <div class='video-chat-row'>
+        <?- include('./parts/main_ch_video.ejs') ?>
+        <?- include('./parts/main_ch_chat_output.ejs') ?>
+    </div>
+    <?- include('./parts/main_ch_chat_input.ejs', { name : locals.name }) ?>
+    <?- include('./parts/main_ch_stat.ejs', { name : locals.name }) ?>
+    <?- include('./parts/main_ch_submission.ejs', { name : locals.name }) ?>
+
+    <script>
+    let dom;
+
+    document.getElementById('chat_container')
+    .addEventListener
+    (
+        'DOMNodeInserted', (e) =>
+        {
+            dom = document.getElementById('chat_container');
+            dom.scrollTop = dom.scrollHeight;
+        }
+    );
+    </script>
 </body>
 </html>

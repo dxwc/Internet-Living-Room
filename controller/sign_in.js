@@ -1,11 +1,11 @@
 let router    = require('express').Router();
 let is_logged = require('./function/is_logged.js');
 
-router.get('/', (req, res) =>
+router.get('/sign_in', (req, res) =>
 {
     return res.render
     (
-        'home',
+        'sign_in',
         { name : is_logged(req) }
     );
 });

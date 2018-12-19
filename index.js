@@ -15,6 +15,11 @@ app.use
 );
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(express.static('./view/public/'));
+
+require('ejs').delimiter = '?';
+app.set('view engine', 'ejs');
+app.set('views', './view/templates/');
 // TODO: Consider deleting captcha using a middleware :
 // - if after n minutes or
 // - if user visits non-captcha url

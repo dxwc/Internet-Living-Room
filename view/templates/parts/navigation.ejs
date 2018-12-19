@@ -1,11 +1,48 @@
-<style>
-    nav ol
-    {
-        list-style-type: none;
-    }
-</style>
-<nav>
-    <ul>
-        <li><a href='/'>Home</a></li>
-    </ul>
+<nav class='navbar topnav container-fluid' style='padding : 0'>
+    <span class='navbar-header'>
+            <a class='navbar-brand' href='/'>ILR</a>
+    </span>
+    <span class='navbar-right'>
+        <? if(locals.name !== false) { ?>
+        <p class='navbar-text font-italic'>
+            <a href='/user/<?= name ?>'><?= name ?></a>
+        </p>
+        <button
+            id='logout'
+            type='button'
+            class='btn btn-default navbar-btn'>Sign Out</button>
+        <? } else { ?>
+        <button
+            onclick='window.location.href = "/sign_in"'
+            type='button'
+            class='btn navbar-btn'>Sign in</button>
+
+        <button
+            onclick='window.location.href = "/sign_up"'
+            type='button'
+            class='btn btn-default navbar-btn'>Sign Up</button>
+        <? } ?>
+    </span>
 </nav>
+<? if(locals.name !== false) { ?>
+<script>
+    document.getElementById('logout').addEventListener('click', (e) =>
+    {
+        e.preventDefault();
+        fetch
+        (
+            '/api/0.0.0/logout',
+            {
+                method : 'POST',
+                headers :
+                {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            }
+        )
+        .then(() => window.location.reload(true))
+        .catch(() => window.location.reload(true));
+    });
+</script>
+<? } ?>

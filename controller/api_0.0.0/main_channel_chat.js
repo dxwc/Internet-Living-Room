@@ -1,14 +1,14 @@
 let router = require('express').Router();
 let Event  = require('events');
 let xss    = require('xss-filters');
-let c      = require('../controller/api_0.0.0/_common.js');
+let c      = require('./_common.js');
+let uuid   = require('uuid/v4');
 
 global.chat = new Event();
 
 router.get
 (
-    '/main_channel/chat',
-    require('../middleware/logged_in_only.js'),
+    '/api/0.0.0/main_channel/chat',
     (req, res) =>
     {
         res.setHeader('Cache-Control', 'no-cache');
@@ -31,20 +31,30 @@ router.get
             );
         }
 
-        global.chat.on(req.session.passport.user.id, event_listener);
+        let evt_on_name = uuid();
+
+        global.chat.on(evt_on_name, event_listener);
+
+        let keep_connection_alive = setInterval(() =>
+        // Every 5 second, send something to prevent browser from closing as an unused
+        // connection
+        {
+            res.write(`data: ${JSON.stringify({ keeping_alive : true })}\n\n`);
+        }, 5000);
+
         res.on('close', () =>
         {
-            global.chat.removeListener
-            (req.session.passport.user.id, event_listener);
+            clearInterval(keep_connection_alive);
+            global.chat.removeListener(evt_on_name, event_listener);
         });
     }
 );
 
 router.post
 (
-    '/main_channel/chat',
-    require('../middleware/logged_in_only.js'),
-    require('../middleware/captcha_control.js'),
+    '/api/0.0.0/main_channel/chat',
+    require('../../middleware/logged_in_only.js'),
+    // require('../../middleware/captcha_control.js'),
     (req, res) =>
     {
         if(typeof(req.body.comment) !== 'string' && req.body.comment.trim().length)

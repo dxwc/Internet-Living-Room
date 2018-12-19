@@ -2,9 +2,9 @@ let router = require('express').Router();
 let uuid   = require('uuid/v4');
 let Event  = require('events');
 let val    = require('validator');
-let op     = require('../model/api_operations');
+let op     = require('../../model/api_operations');
 
-router.get('/channel/:id', (req, res) =>
+router.get('/api/0.0.0/channel/:id', (req, res) =>
 // TODO: allow one connection per user to a channel, or very few user can attempt
 // a DOS attack
 {
@@ -58,7 +58,11 @@ router.get('/channel/:id', (req, res) =>
     });
 });
 
-router.get('/channel', require('../middleware/logged_in_only.js'), (req, res) =>
+router.get
+(
+    '/api/0.0.0/channel',
+    require('../../middleware/logged_in_only.js'),
+    (req, res) =>
 // TODO: consider making this a POST request
 // FIXME: a different user creating channel is overwriting previous channel
 // and continues to send update to newly created channel and closes connection

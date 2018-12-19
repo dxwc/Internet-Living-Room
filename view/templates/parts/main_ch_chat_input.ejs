@@ -1,0 +1,66 @@
+<? if(locals.name) { ?>
+<div class='card card-body rounded-0 border-top-0 padding-0'>
+    <div class='input-group'>
+        <input
+            id='comment'
+            type='text'
+            class='form-control'
+            placeholder='Your thoughts on the video...'>
+        <div class='input-group-append'>
+            <button
+                id='send'
+                type='button'
+                class='btn'>Send</button>
+        </div>
+    </div>
+
+    <div id='comment_info'></div>
+</div>
+
+
+<script>
+{
+    let send = document.getElementById('send');
+    let comment = document.getElementById('comment');
+    let comment_info = document.getElementById('comment_info');
+
+    comment.addEventListener('keydown', (e) => e.keyCode === 13 ? send.click() : '');
+
+    send.addEventListener('click', (e) =>
+    {
+        if(comment_info.innerHTML) comment_info.innerHTML = '';
+        e.preventDefault();
+        if(comment.value.trim().length)
+        {
+            fetch
+            (
+                '/api/0.0.0/main_channel/chat',
+                {
+                    method : 'POST',
+                    headers :
+                    {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body : JSON.stringify({ comment : comment.value.trim() })
+                }
+            )
+            .then((res) => res.json())
+            .then((res) =>
+            {
+                if(res.success) comment.value = '';
+                else throw { };
+            })
+            .catch((err) =>
+            {
+                comment_info.innerHTML = 'Error commenting, retry or contact admin';
+            });
+        }
+    })
+}
+</script>
+<? } else { ?>
+    <p class='card card-body text-center rounded-0 border-top-0'>
+            You must be signed in to chat
+        </p>
+<? } ?>

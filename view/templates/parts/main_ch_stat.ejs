@@ -1,0 +1,42 @@
+<? if(locals.name) { ?>
+<div class='card card-body rounded-0 text-left border-top-0'>
+<? } else { ?>
+<div class='card card-body rounded-0 text-left'>
+<? } ?>
+    <p id='stat1'></p>
+    <progress id='stat2' max='100' min='0' style='width: 100%'></progress>
+    <div id='stat3'></div>
+</div>
+<script>
+    let stat1 = document.getElementById('stat1');
+    let stat2 = document.getElementById('stat2');
+    let stat3 = document.getElementById('stat3');
+    function process_stats(data)
+    {
+        if
+        (
+            data.users_recieving &&
+            stat1.innerHTML !== data.users_recieving + ' watching'
+        )
+            stat1.innerHTML = data.users_recieving + ' watching';
+    }
+
+    setInterval(() =>
+    {
+        if(!player || !player.getDuration || !player.getCurrentTime)
+        {
+            stat2.removeAttribute('value');
+            return;
+        }
+
+        let fraction = player.getCurrentTime()/player.getDuration();
+        if(typeof(fraction) === 'number')
+            stat2.setAttribute('value',  Math.round(fraction*100))
+        else
+            stat2.removeAttribute('value')
+
+        stat3.innerHTML =
+        `Duration: ${Math.round(player.getDuration())} seconds,\
+        Current time : ${Math.round(player.getCurrentTime())} seconds`;
+    }, 500);
+</script>

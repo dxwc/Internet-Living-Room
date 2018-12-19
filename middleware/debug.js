@@ -65,7 +65,7 @@ module.exports = (app) =>
                 path.join
                 (
                     __dirname,
-                    '../test/controller/channel_connect.html'
+                    '../test/controller/api_0.0.0/manual/channel_connect.html'
                 )
             );
         }
@@ -76,7 +76,7 @@ module.exports = (app) =>
                 path.join
                 (
                     __dirname,
-                    '../test/controller/main_channel_connect.html'
+                    '../test/controller/api_0.0.0/manual/main_channel_connect.html'
                 )
             );
         }
@@ -87,7 +87,7 @@ module.exports = (app) =>
                 path.join
                 (
                     __dirname,
-                    '../test/controller/main_channel_chat.html'
+                    '../test/controller/api_0.0.0/manual/main_channel_chat.html'
                 )
             );
         }

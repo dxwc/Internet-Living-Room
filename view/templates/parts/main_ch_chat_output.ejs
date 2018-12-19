@@ -1,0 +1,58 @@
+<style>
+    .comment
+    {
+        display : block;
+    }
+    .comment *
+    {
+        display: inline;
+    }
+</style>
+<div
+    id='chat_container'
+    class='card card-body rounded-0 border-left-0 col-3' style='overflow-y: scroll'>
+</div>
+
+<script>
+{
+    let sse_chat = (new EventSource('/api/0.0.0/main_channel/chat'));
+    document.addEventListener('DOMContentLoaded', () =>
+    {
+        let stream = document.getElementById('chat_container');
+        setTimeout(() =>
+        {
+            stream.style += 'height: 100vh;'
+        });
+
+        sse_chat.onmessage = (ev) =>
+        {
+            let data = JSON.parse(ev.data);
+            if(data.keeping_alive) return;
+            if(!data.by || !data.comment)
+            {
+                console.error('invalid data', data);
+                return;
+            }
+
+            let span = document.createElement('span');
+            span.classList.add('comment');
+            let a = document.createElement('a');
+            a.href =`/user/${data.by}`;
+            a.innerHTML = data.by;
+            a.title = new Date().toLocaleString();
+
+            let seperator = document.createTextNode(': ');
+            let comment = document.createTextNode(data.comment);
+            span.title = data.users_recieving ?
+                            ' Recieved by ' + data.users_recieving + ' users' :
+                            '';
+
+            span.append(a);
+            span.append(seperator);
+            span.append(comment);
+            stream.appendChild(span);
+        }
+        sse_chat.onerror = (e) => console.error('Error--->', e);
+    });
+}
+</script>
